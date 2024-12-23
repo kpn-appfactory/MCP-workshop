@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vardemo-config
+  labels:
+    app: vardemo
+data:
+  CM_VAR_1: product
+  CM_VAR_2: customer
+  CM_VAR_3: order
+  CM_VAR_5: payment
+  CM_VAR_hutsefluts: shipment

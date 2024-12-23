@@ -7,6 +7,7 @@ spec:
   minReadySeconds: 3
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 60
+  replicas: 2
   strategy:
     rollingUpdate:
       maxUnavailable: 0
@@ -22,7 +23,7 @@ spec:
       serviceAccountName: vardemo
       containers:
       - name: vardemo
-        image: jvgemert/vardemo:0.9
+        image: jvgemert/vardemo:0.96
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
@@ -31,6 +32,10 @@ spec:
         env:
         - name: PORT
           value: "8080"
+        - name: ConfigMapDemo
+          valueFrom:
+            configMapRef:
+              name: vardemo-config
         resources:
           limits:
             cpu: 100m
