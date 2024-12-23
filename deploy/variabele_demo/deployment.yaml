@@ -25,6 +25,9 @@ spec:
       - name: vardemo
         image: jvgemert/vardemo:0.96
         imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: vardemo-config
         ports:
         - name: http
           containerPort: 8080
@@ -32,10 +35,6 @@ spec:
         env:
         - name: PORT
           value: "8080"
-        - name: ConfigMapDemo
-          envFrom:
-          - configMapRef:
-              name: vardemo-config
         resources:
           limits:
             cpu: 100m
