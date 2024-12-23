@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vardemo-config
+  namespace: vardemo
   labels:
     app: vardemo
 data:
