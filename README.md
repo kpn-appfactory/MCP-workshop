@@ -97,5 +97,8 @@ TODO - vardemo - /data persistent maken
 TODO - http://vardemo.local/kill killed de draaiende container (niet te snel achter elkaar doen) beschrijven
 TODO - Nieuw WSL image maken met user in docker group
 TODO - Webapp pod acties
+TODO - http://vardemo.local/env beschrijven
+TODO - Round robin ingress 
+TODO - Ingress naar services op verschillende poorten deployments
 
 
