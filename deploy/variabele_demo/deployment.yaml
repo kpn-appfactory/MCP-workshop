@@ -23,7 +23,7 @@ spec:
       serviceAccountName: vardemo
       containers:
       - name: vardemo
-        image: jvgemert/vardemo:1.0
+        image: jvgemert/vardemo:1.1
         imagePullPolicy: IfNotPresent
         envFrom:
         - configMapRef:
