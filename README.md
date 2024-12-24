@@ -79,4 +79,16 @@ kubectl get pod -n sleepdemo
 kubectl get pods -n sleepdemo --watch
 ```
 
+TODO ---- Uitleg wat we zien en wat er gebeurt -----
+
+Haal het IP van je WSL op
+```bash
+ip a | grep eth0 | grep inet |awk '{print $2}' | cut -d/ -f1
+```
+
+Edit je windows hosts file C:\Windows\System32\drivers\etc\hosts (als admin) en voeg het volgende toe:
+
+```
+<WSL.IP>    podinfo.local vardemo.local
+```
 

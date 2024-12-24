@@ -10,9 +10,9 @@ metadata:
 spec:
   tls:
   - hosts:
-    - podinfo.blaataap.com
+    - podinfo.local
   rules:
-    - host: podinfo.blaataap.com
+    - host: podinfo.local
       http:
         paths:
           - path: /

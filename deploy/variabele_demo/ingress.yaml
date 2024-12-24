@@ -10,9 +10,9 @@ metadata:
 spec:
   tls:
   - hosts:
-    - vardemo.blaataap.com
+    - vardemo.local
   rules:
-    - host: vardemo.blaataap.com
+    - host: vardemo.local
       http:
         paths:
           - path: /
