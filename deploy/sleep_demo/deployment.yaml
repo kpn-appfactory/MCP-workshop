@@ -23,7 +23,7 @@ spec:
       serviceAccountName: sleepdemo
       containers:
       - name: sleepdemo
-        image: jvgemert/sleepdemo
+        image: jvgemert/sleep:latest
         imagePullPolicy: IfNotPresent
         resources:
           limits:

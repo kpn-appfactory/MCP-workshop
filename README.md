@@ -24,6 +24,7 @@ Open Windows Terminal en open een nieuwe shell in de mcp-workshop WSL image.
 Clone de GitHub repository:
 
 ````bash
+cd
 git clone https://github.com/kpn-appfactory/MCP-workshop.git
 cd ~/MCP-workshop
 ````
@@ -54,5 +55,28 @@ Na 30 seconden zal de container stoppen met werken en is het docker process niet
 
 
 ## Deploy applicatie in Kubernetes (k3s)
+
+```bash
+cd ~/MCP-workshop/deploy/sleep_demo
+
+# Maak een namespace aan
+kubectl apply -f namespace.yaml
+
+kubectl get namespace
+```
+
+Je ziet nu dat er een nieuwe namespace "sleepdemo" is aangemaakt
+
+Nu gaan we de overige manifests uitrollen in deze namespace
+
+```bash
+cd ~/MCP-workshop/deploy/sleep_demo
+
+kubectl apply -f .
+
+kubectl get pod -n sleepdemo
+
+kubectl get pods -n sleepdemo --watch
+```
 
 
