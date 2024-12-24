@@ -108,6 +108,7 @@ def main():
         if kill:
             break
     log("Stopping application")
+    server_socket.close()
 
 
 def requests(requests_file:str) -> int:

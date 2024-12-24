@@ -92,3 +92,10 @@ Edit je windows hosts file C:\Windows\System32\drivers\etc\hosts (als admin) en 
 <WSL.IP>    podinfo.local vardemo.local
 ```
 
+
+TODO - vardemo - /data persistent maken
+TODO - http://vardemo.local/kill killed de draaiende container (niet te snel achter elkaar doen) beschrijven
+TODO - Nieuw WSL image maken met user in docker group
+TODO - Webapp pod acties
+
+
