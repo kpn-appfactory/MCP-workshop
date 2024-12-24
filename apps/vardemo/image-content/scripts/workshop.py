@@ -18,6 +18,8 @@ def main():
     # Sort the CM_VAR_ vars by name
     envs = sorted(envs, key=lambda x: x['name'])
     cm_vars = sorted(cm_vars, key=lambda x: x['name'])
+    kill = False
+    container_start_time = time.ctime()
 
     # Create a socket object
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,6 +64,7 @@ def main():
         log(f"Received data from client:\n{data.decode('ascii')}\n")
 
         body =  f"Time in container: {str(time.ctime())}\n"
+        body += f"Container start time: {container_start_time}\n"
         body += f"Requests received: {requests(requests_file)}\n"
         body += f"Hostname: {host}\n"
         body += f"Container port: {port}\n"
@@ -79,6 +82,9 @@ def main():
                     body += f"{cm_var['name']}: {cm_var['value']}\n"
             else:
                 body += "No CM_VAR_ vars found\n"
+        if len(get_request_path) == 1 and get_request_path[0].lower() == "kill":
+            body += "\n!!! THIS CONTAINER WILL BE KILLED !!!\n"
+            kill = True
         response_headers = {
             'Content-Type': 'text/text; encoding=utf8',
             'Content-Length': len(body),
@@ -99,6 +105,9 @@ def main():
 
         # Close the connection
         client_socket.close()
+        if kill:
+            break
+    log("Stopping application")
 
 
 def requests(requests_file:str) -> int:
