@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sleepdemo
+  namespace: sleepdemo
+spec:
+  minReadySeconds: 3
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 60
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: sleepdemo
+  template:
+    metadata:
+      labels:
+        app: sleepdemo
+    spec:
+      serviceAccountName: sleepdemo
+      containers:
+      - name: sleepdemo
+        image: jvgemert/sleepdemo
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 32Mi
+          requests:
+            cpu: 50m
+            memory: 8Mi
