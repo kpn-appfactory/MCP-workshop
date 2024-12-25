@@ -6,8 +6,7 @@ Het doel van deze workshop is om een
 
 We hebben voor deze workshop een kant en klare WSL image gemaakt die je kan gebruiken om de workshop te volgen.
 
-Deze kan je hier downloaden: https://mcpworkshop.blob.core.windows.net/mcp-workshop/mcp-workshop.zip
-
+Deze kan je hier downloaden: https://mcpworkshop.blob.core.windows.net/mcp-workshop/mcp-workshop.tgz
 Pak de image uit en importeer deze in WSL met het volgende commando:
 
 ```
