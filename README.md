@@ -108,10 +108,12 @@ TODO - http://vardemo.local/kill killed de draaiende container (niet te snel ach
 TODO - Nieuw WSL image maken met user in docker group
 
 TODO - Webapp pod acties
+  Redeploy met nieuwe image
+  Blue green deployment
 
 TODO - http://vardemo.local/env beschrijven
 
-TODO - Round robin ingress
+TODO - Round robin ingress 
 
 TODO - Ingress naar services op verschillende poorten deployments
 
