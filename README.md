@@ -9,7 +9,7 @@ We hebben voor deze workshop een kant en klare WSL image gemaakt die je kan gebr
 Deze kan je hier downloaden: https://mcpworkshop.blob.core.windows.net/mcp-workshop/mcp-workshop.tgz
 Pak de image uit en importeer deze in WSL met het volgende commando:
 
-```
+```bash
 cd %USERPROFILE%\Downloads
 tar -xvzf mcp-workshop.tgz
 mkdir %USERPROFILE%\wsl
@@ -18,15 +18,15 @@ cd %USERPROFILE%\wsl\mcp-workshop
 wsl --import mcp-workshop . %USERPROFILE%\Downloads\mcp-workshop.tar
 ```
 
-Open Windows Terminal en open een nieuwe shell in de mcp-workshop WSL image.
+Herstart Windows Terminal en open een nieuwe shell in de mcp-workshop WSL image.
 
 Clone de GitHub repository:
 
-````bash
+```bash
 cd
 git clone https://github.com/kpn-appfactory/MCP-workshop.git
 cd ~/MCP-workshop
-````
+```
 
 Open VS Code in de root van de MCP-workshop folder:
 
@@ -41,6 +41,12 @@ Probeer te begrijpen wat er gebeurt in de verschillende bestanden en folders.
 ## Docker applicatie
 
 TODO---- INTRO text waarom eerst docker dan kubernetes ------
+
+Voordat jouw gebruiker (mcp-workshop) docker mag starten, moet deze gebruiker aan de groep docker worden toegevoegd.
+
+```bash
+sudo usermod -aG docker mcp-workshop
+```
 
 Start docker applicatie
 ```bash
@@ -78,7 +84,11 @@ kubectl get pod -n sleepdemo
 kubectl get pods -n sleepdemo --watch
 ```
 
-TODO ---- Uitleg wat we zien en wat er gebeurt -----
+Docker start je container één keer en laat hem 30 seconden draaien. Daarna stopt hij.
+Kubernetes daarentegen houdt je container in de gaten. Zodra hij stopt, start Kubernetes hem automatisch opnieuw op. Dit zorgt ervoor dat je applicatie altijd draait, zelfs als er iets misgaat.
+
+Docker is vooral gericht op het creëren en beheren van individuele containers, terwijl Kubernetes bedoeld is om grote clusters van containers te orchestreren.
+Kubernetes zorgt voor zelfherstel door containers automatisch te herstarten als ze crashen of stoppen.
 
 Haal het IP van je WSL op
 ```bash
@@ -87,7 +97,7 @@ ip a | grep eth0 | grep inet |awk '{print $2}' | cut -d/ -f1
 
 Edit je windows hosts file C:\Windows\System32\drivers\etc\hosts (als admin) en voeg het volgende toe:
 
-```
+```bash
 <WSL.IP>    podinfo.local vardemo.local
 ```
 
@@ -101,7 +111,7 @@ TODO - Webapp pod acties
 
 TODO - http://vardemo.local/env beschrijven
 
-TODO - Round robin ingress 
+TODO - Round robin ingress
 
 TODO - Ingress naar services op verschillende poorten deployments
 
