@@ -47,7 +47,7 @@ spec:
         volumeMounts:
         - name: vardemo
           mountPath: /data
-        volumes:
-        - name: vardemo
-          persistentVolumeClaim:
-            claimName: longhorn-vardemo-pvc
+      volumes:
+      - name: vardemo
+        persistentVolumeClaim:
+          claimName: longhorn-vardemo-pvc
