@@ -90,6 +90,18 @@ Kubernetes daarentegen houdt je container in de gaten. Zodra hij stopt, start Ku
 Docker is vooral gericht op het creëren en beheren van individuele containers, terwijl Kubernetes bedoeld is om grote clusters van containers te orchestreren.
 Kubernetes zorgt voor zelfherstel door containers automatisch te herstarten als ze crashen of stoppen.
 
+## Deploy podinfo applicatie
+
+```bash
+kubectl apply -f deploy/variabele_demo/namespace.yaml
+
+kubectl apply -f deploy/variabele_demo/
+
+#_Nu in de browser naar https://vardemo.local
+```
+
+## Deploy vardemo applicatie
+
 Haal het IP van je WSL op
 ```bash
 ip a | grep eth0 | grep inet |awk '{print $2}' | cut -d/ -f1
