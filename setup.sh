@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script is tested on Ubuntu 24.04 LTS in an WSL2 environment
+
 # Update OS & install docker
 sudo apt update
 sudo apt upgrade
@@ -32,4 +34,3 @@ ln -fs /etc/rancher/k3s/k3s.yaml ~/.kube/config
 
 echo
 echo "!!! Please logout and login again to make use of new group membership !!!"
- 
