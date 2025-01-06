@@ -77,13 +77,17 @@ watch docker ps
 
 Er is nu een docker applicatie gestart die te bereiken is op http://localhost:8080 via een browser of curl.
 
+```bash
+curl http://localhost:8080
+```
+
 Simuleer een applicatie crash:
 
 ```bash
 curl http://localhost:8080/kill
 ```
 
-Je zal zien dat de applicatie na het boven staande commando crashed en niet meer terug komt, als je wil dat de applicatie draait zal je hem weer zelf moeten starten. (HINT - later zullen we hier de voordelen van Kubernetes zien.)
+Je zal zien dat de applicatie na het boven staande commando crashed en niet meer terug komt, als je wil dat de applicatie draait zal je hem weer zelf moeten starten. (HINT - later zullen we hier de voordelen van Kubernetes deployment zien.)
 
 
 #### Bonus
@@ -108,9 +112,40 @@ We gaan nu dezelfde applicatie starten in Kubernetes. Dit gaan we doen door midd
 ```bash
 cd ~/MCP-workshop/deploy/vardemo
 
-# Maak een namespace aan
+# Maak een namespace aan (uitleg in de bonus)
 kubectl apply -f namespace.yaml
+
+# Start een pod (hierin leeft de container)
+kubectl apply -f pod.yaml
+
+# Bekijk de pod
+kubectl get pod --namespace vardemo -o wide
 ```
+
+**Voorbeeld**
+
+```bash
+kubectl get pod --namespace vardemo -o wide
+NAME          READY   STATUS    RESTARTS   AGE     IP           NODE              NOMINATED NODE   READINESS GATES
+vardemo-pod   1/1     Running   0          4m41s   10.42.0.10   desktop-oa8vr5k   <none>           <none>
+```
+
+Zoek in de output van het laatste commando het IP adress van de pod. Zoals in het voorbeeld `10.42.0.10`
+
+Er is nu een applicatie gestart die te bereiken is op http://<JOUW-IP>:8080 via een browser of curl.
+
+```bash
+curl http://<JOUW-IP>:8080
+```
+
+Simuleer een applicatie crash:
+
+```bash
+curl http://<JOUW-IP>:8080/kill
+```
+
+Je zal zien dat de applicatie na het boven staande commando crashed en niet meer terug komt, als je wil dat de applicatie draait zal je hem weer zelf moeten starten. (HINT - later zullen we hier de voordelen van Kubernetes deployment zien.)
+
 
 
 #### Bonus
