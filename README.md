@@ -42,12 +42,6 @@ Probeer te begrijpen wat er gebeurt in de verschillende bestanden en folders.
 
 TODO---- INTRO text waarom eerst docker dan kubernetes ------
 
-Voordat jouw gebruiker (mcp-workshop) docker mag starten, moet deze gebruiker aan de groep docker worden toegevoegd.
-
-```bash
-sudo usermod -aG docker mcp-workshop
-```
-
 Start docker applicatie
 ```bash
 docker run -d jvgemert/sleep
