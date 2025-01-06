@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vardemo
+  namespace: vardemo
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vardemo
+  template:
+    metadata:
+      labels:
+        app: vardemo
+    spec:
+      serviceAccountName: vardemo
+      containers:
+      - name: vardemo
+        image: jvgemert/vardemo:1.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 32Mi
+          requests:
+            cpu: 50m
+            memory: 8Mi
