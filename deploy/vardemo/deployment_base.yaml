@@ -14,7 +14,6 @@ spec:
       labels:
         app: vardemo
     spec:
-      serviceAccountName: vardemo
       containers:
       - name: vardemo
         image: jvgemert/vardemo:1.2
