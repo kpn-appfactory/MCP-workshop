@@ -144,6 +144,15 @@ Simuleer een applicatie crash:
 curl http://<JOUW-IP>:8080/kill
 ```
 
+Verwijderen pod dit kan je doen door het zelfde manifest te gebruiken:
+
+```bash
+cd ~/MCP-workshop/deploy/vardemo
+
+# Verwijderen pod
+kubectl delete -f pod.yaml
+```
+
 #### Bonus
 
 Bekijk de logging van de pod
@@ -156,30 +165,29 @@ Zoals je kan zien doen geven we bij het opvragen van de logs en pods steeds het 
 
 Namespaces helpen ook bij het beheren van toegang en het toewijzen van hoeveel resources elk team mag gebruiken. Dit maakt het eenvoudiger om een Kubernetes-cluster georganiseerd en veilig te houden.
 
-### Opdracht 4 ()
+### Opdracht 4 (Create deployment)
 
+In deze opdracht gaan we een deploment uitrollen. Een deployment wordt meestal gebruikt voor het configureren van de pods. Hierin is het onder andere mogelijk om aan te geven hoeveel replicas er van een pod moeten komen voor redudantie en het gebruik van eventuele storage (latere opdracht).
 
-
-Je ziet nu dat er een nieuwe namespace "sleepdemo" is aangemaakt
-
-Nu gaan we de overige manifests uitrollen in deze namespace
+Tevens rollen we voor ontsluiting en security extra resources uit waar we hier niet verder op in gaan.
 
 ```bash
-cd ~/MCP-workshop/deploy/sleep_demo
+# Extra benodigde resources
+kubectl apply -f service-account.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
 
-kubectl apply -f .
+# Deployment
+kubectl apply -f deployment_no_storage.yaml
 
-kubectl get pod -n sleepdemo
+# Bekijk de pods
+kubectl get pods -n vardemo -o wide
 
-kubectl get pods -n sleepdemo --watch
+# Bekijk deployment
+kubectl get deployment -n vardemo -o wide
 ```
 
-Docker start je container één keer en laat hem 30 seconden draaien. Daarna stopt hij.
-Kubernetes daarentegen houdt je container in de gaten. Zodra hij stopt, start Kubernetes hem automatisch opnieuw op. Dit zorgt ervoor dat je applicatie altijd draait, zelfs als er iets misgaat.
-
-Docker is vooral gericht op het creëren en beheren van individuele containers, terwijl Kubernetes bedoeld is om grote clusters van containers te orchestreren.
-Kubernetes zorgt voor zelfherstel door containers automatisch te herstarten als ze crashen of stoppen.
-
+Je zal nu zien dat er 2 pods zijn. 
 
 ## Deploy vardemo applicatie
 

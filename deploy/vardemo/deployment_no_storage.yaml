@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,18 +26,10 @@ spec:
       - name: vardemo
         image: jvgemert/vardemo:1.2
         imagePullPolicy: IfNotPresent
-        envFrom:
-        - configMapRef:
-            name: vardemo-config
         ports:
         - name: http
           containerPort: 8080
           protocol: TCP
-        env:
-        - name: PORT
-          value: "8080"
-        - name: CM_VAR_deploy
-          value: "deployment.yaml"
         resources:
           limits:
             cpu: 100m

@@ -1,12 +1,17 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vardemo
   namespace: vardemo
 spec:
+  minReadySeconds: 3
   revisionHistoryLimit: 5
-  replicas: 1
+  progressDeadlineSeconds: 60
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
   selector:
     matchLabels:
       app: vardemo
@@ -15,14 +20,23 @@ spec:
       labels:
         app: vardemo
     spec:
+      serviceAccountName: vardemo
       containers:
       - name: vardemo
         image: jvgemert/vardemo:1.2
         imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: vardemo-config
         ports:
         - name: http
           containerPort: 8080
           protocol: TCP
+        env:
+        - name: PORT
+          value: "8080"
+        - name: CM_VAR_deploy
+          value: "deployment.yaml"
         resources:
           limits:
             cpu: 100m
@@ -30,3 +44,10 @@ spec:
           requests:
             cpu: 50m
             memory: 8Mi
+        volumeMounts:
+        - name: vardemo
+          mountPath: /data
+      volumes:
+      - name: vardemo
+        persistentVolumeClaim:
+          claimName: longhorn-vardemo-pvc
