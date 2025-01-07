@@ -1,16 +1,42 @@
+- [MCP-workshop](#mcp-workshop)
+  - [Introduction](#introduction)
+  - [Voorbereiding](#voorbereiding)
+    - [Download en instaleer WSL image (optie 1)](#download-en-instaleer-wsl-image-optie-1)
+    - [Configureer je bestaande Ubuntu in WSL (optie 2)](#configureer-je-bestaande-ubuntu-in-wsl-optie-2)
+  - [Opdrachten](#opdrachten)
+    - [Opdracht 1 (bekijk kubernetes manifests)](#opdracht-1-bekijk-kubernetes-manifests)
+    - [Opdracht 2 (Docker applicatie)](#opdracht-2-docker-applicatie)
+      - [Bonus](#bonus)
+    - [Opdracht 3 (Deploy applicatie in Kubernetes)](#opdracht-3-deploy-applicatie-in-kubernetes)
+      - [Bonus](#bonus-1)
+    - [Opdracht 4 (Create deployment)](#opdracht-4-create-deployment)
+      - [Bonus 1 (Service)](#bonus-1-service)
+      - [Bonus 2 (Ingress)](#bonus-2-ingress)
+    - [Opdracht 5 (Create deployment met storage)](#opdracht-5-create-deployment-met-storage)
+      - [Bonus](#bonus-2)
+  - [Bonus opdrachten](#bonus-opdrachten)
+    - [Opdracht 6](#opdracht-6)
+    - [Opdracht 7](#opdracht-7)
+    - [Opdracht 8](#opdracht-8)
+          - [Grote lijnen](#grote-lijnen)
+
+
 # MCP-workshop
+
 MCP container and kubernetes workshop
 
 ## Introduction
-Het doel van deze workshop is om een 
+
+Het doel van deze workshop is om applicaties te laten draaien in een Kubernetes "cluster". Tijdens deze workshop zullen we gebruik maken van K3S wat een eenvoudige maar volledig functioneel Kubernetes cluster is.
 
 ## Voorbereiding
+
 Om deze workshop te kunnen draaien is er een omgeving nodig met daarop K3S en docker. Er zijn 2 opties om die te krijgen:
 1. Download de kant en klare WSL image
 2. Je beschikt al over een Ubuntu en maakt gebruik van het setup script
 
-
 ### Download en instaleer WSL image (optie 1)
+
 We hebben voor deze workshop een kant en klare WSL image gemaakt die je kan gebruiken om de workshop te volgen.
 
 Deze kan je hier downloaden: https://mcpworkshop.blob.core.windows.net/mcp-workshop/mcp-workshop.tgz
@@ -36,6 +62,7 @@ cd ~/MCP-workshop
 ```
 
 ### Configureer je bestaande Ubuntu in WSL (optie 2)
+
 Zorg dat er een Ubuntu op je systeem staat waar we docker en k3s kunnen installeren. Dit is getest met Ubuntu 24.04 LTS
 
 Open een Terminal naar je Ubuntu systeem en Clone de Github repository
@@ -50,7 +77,9 @@ cd ~/MCP-workshop
 
 
 ## Opdrachten
-### Opdracht 1 (bekijk de bestanden)
+
+### Opdracht 1 (bekijk kubernetes manifests)
+
 Open VS Code in de root van de MCP-workshop folder:
 
 ```bash
@@ -89,7 +118,6 @@ curl http://localhost:8080/kill
 
 Je zal zien dat de applicatie na het boven staande commando crashed en niet meer terug komt, als je wil dat de applicatie draait zal je hem weer zelf moeten starten. (HINT - later zullen we hier de voordelen van Kubernetes deployment zien.)
 
-
 #### Bonus
 
 Bekijk de logs van de docker container
@@ -104,8 +132,7 @@ docker stop vardemo
 docker rm vardemo
 ```
 
-
-### Opdracht 3 (Deploy applicatie in Kubernetes - k3s)
+### Opdracht 3 (Deploy applicatie in Kubernetes)
 
 We gaan nu dezelfde applicatie starten in Kubernetes. Dit gaan we doen door middel van een Pod om dit vergelijkbaar te maken met de Docker implementatie. Later gaan we gebruik maken van een Deployment om de voordelen van Kubernetes te laten zien.
 
@@ -172,6 +199,8 @@ In deze opdracht gaan we een deploment uitrollen. Een deployment wordt meestal g
 Tevens rollen we voor ontsluiting en security extra resources uit waar we hier niet verder op in gaan.
 
 ```bash
+cd ~/MCP-workshop/deploy/vardemo
+
 # Extra benodigde resources
 kubectl apply -f service-account.yaml
 kubectl apply -f service.yaml
@@ -419,6 +448,8 @@ Benader de applicatie weer en zie dat de telling opnieuw is begonnen.
 Met de volgende commandos wordt de applicatie aangepast zodat deze gebruik maakt van persistent storage
 
 ```bash
+cd ~/MCP-workshop/deploy/vardemo
+
 # Aanmaken persistent storage
 kubectl apply -f pvc.yaml
 
@@ -478,6 +509,8 @@ ports:
 Deploy de applicatie:
 
 ```bash
+cd ~/MCP-workshop/deploy/vardemo
+
 # Deploy
 kubectl apply -f deployment_env.yaml
 ```
@@ -504,6 +537,8 @@ envFrom:
 Deploy nu de configmap en de nieuwe deployment:
 
 ```bash
+cd ~/MCP-workshop/deploy/vardemo
+
 # Maak configmap
 kubectl apply -f configmap.yaml
 
@@ -521,43 +556,38 @@ kubectl get pods --namespace vardemo
 
 Aan de `AGE` kan je zien hoe oud een resource is en dat de pod opnieuw is gestart.
 
-Benader de applicatie en bekijk welke variables deze heeft.
+Benader de applicatie en bekijk welke variables deze heeft. Standaard worden onder aan de output van de applicatie alle variablen weergegeven die beginnen met `CM_VAR_`. Vergelijk de variabelen in de configmap en de output van de applicatie.
 
-
-## Deploy vardemo applicatie
-
-Haal het IP van je WSL op
-```bash
-ip a | grep eth0 | grep inet |awk '{print $2}' | cut -d/ -f1
-```
-
-Edit je windows hosts file C:\Windows\System32\drivers\etc\hosts (als admin) en voeg het volgende toe:
+Als je alle environment variablen wil zien kan die door `/env` toe te voegen aan het path.
 
 ```bash
-<WSL.IP>    podinfo.local vardemo.local
+curl http://172.30.65.10/env -H 'Host: vardemo.local'
 ```
 
-TODO - Ingress naar services op verschillende poorten deployments
+Probeer nu zelf variablen toe te voegen via de configmap. In principe wordt een configmap regelmatig ingelezen, het is echter afhankelijk van de applicatie of dit wordt opgepakt.
 
+De vardemo applicatie doet dit niet dus zal die herstart moeten worden voor je aanpassing zichtbaar is.
 
-## Deploy podinfo applicatie via Helmchart
+### Opdracht 8
 
-
-```bash
-kubectl apply -f deploy/variabele_demo/namespace.yaml
-
-kubectl apply -f deploy/variabele_demo/
-
-#_Nu in de browser naar https://vardemo.local
-```
-
+Deployment via Helm
 
 
 
 
 
 ###### Grote lijnen ######
-- Bonus deplyment Evironment, inclusief pod op andere poort laten luisteren.
-- Bonus Configmap
 - Helm deployment podinfo inclusief upgrade (geen downtime) Beschrijven round robin loadbalancing ingress
-
+- Installatie met oude versie
+- Installatie met nieuwe versie / upgrade
+- Blue / green
+- Verhaal geen downtijd (als je applicatie daar mee om kan gaan)
+- Helm installatie met parameters
+- Helm installatie met values file
+- Bonus bekijk chart files
+- Overzicht applicatie / helmchart versies
+- Opvragen van values welke nu gebruikt worden
+  - Dumpen naar schrem
+  - Dumpen naar file voor hergebruik
+- Laat alle helm values zien
+- 
