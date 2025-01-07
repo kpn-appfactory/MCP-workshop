@@ -156,7 +156,7 @@ Zoals je kan zien doen geven we bij het opvragen van de logs en pods steeds het 
 
 Namespaces helpen ook bij het beheren van toegang en het toewijzen van hoeveel resources elk team mag gebruiken. Dit maakt het eenvoudiger om een Kubernetes-cluster georganiseerd en veilig te houden.
 
-### Opdracht 4
+### Opdracht 4 ()
 
 
 
@@ -194,26 +194,11 @@ Edit je windows hosts file C:\Windows\System32\drivers\etc\hosts (als admin) en 
 <WSL.IP>    podinfo.local vardemo.local
 ```
 
-TODO - vardemo - /data persistent maken
-
-TODO - http://vardemo.local/kill killed de draaiende container (niet te snel achter elkaar doen) beschrijven
-
-TODO - Nieuw WSL image maken met user in docker group
-
-TODO - Webapp pod acties
-  Redeploy met nieuwe image
-  Blue green deployment
-
-TODO - http://vardemo.local/env beschrijven
-
-TODO - Round robin ingress 
-
 TODO - Ingress naar services op verschillende poorten deployments
 
 
 ## Deploy podinfo applicatie via Helmchart
 
-# TODO: Helmchart 
 
 ```bash
 kubectl apply -f deploy/variabele_demo/namespace.yaml
@@ -232,5 +217,7 @@ kubectl apply -f deploy/variabele_demo/
 - Deployment uitleggen met replica's
 - Uitleg deploy, service, ingress (text) simple deploy in bonus extra uitleg
 - Deployment met persistent storage
-- Helm deployment podinfo inclusief upgrade (geen downtime)
+- Bonus deplyment Evironment, inclusief pod op andere poort laten luisteren.
+- Bonus Configmap
+- Helm deployment podinfo inclusief upgrade (geen downtime) Beschrijven round robin loadbalancing ingress
 
