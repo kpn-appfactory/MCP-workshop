@@ -400,13 +400,128 @@ In het bovenstaande manifest verwijst het `-backend:` gedeelte naar de achterlig
 
 De storage die standaard in een pod aanwezig is, is niet permanent. Dit betekend dus dat wanneer een pod wordt gestopt eventuele data verloren gaat. Om dit op te lossen kan er gebruik gemaakt worden van persitent storage welke eventueel deelbaar is tussen pods.
 
+Met een browser of curl kan de applicatie opgevraagd worden. In de output van de applicatie staat een regel met `Requests received`, deze geeft weer hoe vaak de applicatie is benaderd. Zonder de persistent storage zou de telling na iedere herstart weer opnieuw beginnen.
+
+Benader de applicatie zoals beschreven bij vorige opdracht en noteer het aantal `Requests received`
+
+```bash
+# Verwijder de pods
+kubectl delete pods --force --namespace vardemo -l app=vardemo
+
+# Bekijk de status
+kubectl get pods --namespace vardemo -l app=vardemo --watch
+```
+
+Het laatste commando met `--watch` kan worden afgebroken met CTRL+C
+
+Benader de applicatie weer en zie dat de telling opnieuw is begonnen.
+
+Met de volgende commandos wordt de applicatie aangepast zodat deze gebruik maakt van persistent storage
+
 ```bash
 # Aanmaken persistent storage
 kubectl apply -f pvc.yaml
 
-# Deployment met persistant storage
+# Deployment met persistent storage
 kubectl apply -f deployment_storage.yaml
 ```
+
+Bekijk het aantal `Requests received` nogmaals en noteer deze.
+
+Herstart de applicatie nogmaals zoals hierboven beschreven en zie dat de telling nu wel door loopt.
+
+#### Bonus
+
+Bekijk de pvc (persistentvolumeclaim). Een pvc creeert een pv (persitentvolume).
+
+```bash
+# Bekijk de pvc
+kubectl get pvc --namespace vardemo vardemo -o yaml
+
+# Bekijk de pv
+kubectl get pv
+```
+
+Vergelijk `deployment_no_storage.yaml` met `deployment_storage.yaml` in VS-code en zoek de verschillen.
+
+n.b. Een pv is niet namespaced
+
+## Bonus opdrachten
+
+### Opdracht 6
+
+Deployment zijn gebaseerd op een (generiek) image. Kleine aanpassingen kunnen gewijzigd worden door het meegeven van environment variables. De environment variables moeten dan in de deployment mee gegeven worden.
+
+Simpele variablen kunnen mee gegeven worden in de deployment. Voor meer complexe of uitgebreide variablen kan hiervoor ook een configmap gebruikt worden (volgende oefening).
+
+De vardemo applicatie luistert bijvoorbeeld standaard op poort 8080, ter demonstratie kan deze op andere poorten luisteren door het meegeven van een environment variable `PORT`.
+
+```yaml
+env:
+- name: PORT
+    value: "8081"
+- name: CM_VAR_deploy
+    value: "deployment.yaml"
+```
+
+Het bovenstaande is de toevoeging die gedaan aan de deployment. Dit heeft tot gevolg dat de applicatie ook gaat luisteren op een andere poort (namelijk 8081). In de deployment zal kubernetes dus ook moeten weten dat dit het geval is. Bekijk wat er nog meer in de yaml is aangepast.
+
+Onderstaande zorgt er voor dat kubernetes ook weet op welke poort de applicatie luistert.
+
+```yaml
+ports:
+- name: http
+    containerPort: 8081
+    protocol: TCP
+```
+
+Deploy de applicatie:
+
+```bash
+# Deploy
+kubectl apply -f deployment_env.yaml
+```
+
+Benader de applicatie en bekijk `Container port:`
+
+Probeer nu zelf de deployment aan te passen zodat de applicatie luistert op een andere poort zoals `9090`.
+
+### Opdracht 7 
+
+Naast variablen direct in de deployment te zetten zullen we in deze opdracht ook gebruik maken van een configmap.
+
+Bekijk de configmap `configmap.yaml`
+Bekijk de deployment `deployment_env_cm.yaml`
+
+Zie dat het volgende is toegevoegd:
+
+```yaml
+envFrom:
+- configMapRef:
+    name: vardemo-config
+```
+
+Deploy nu de configmap en de nieuwe deployment:
+
+```bash
+# Maak configmap
+kubectl apply -f configmap.yaml
+
+# Maak nieuwe deployment
+kubectl apply -f deployment_env_cm.yaml
+```
+
+Controleer of de configmap er is en de pod opnieuw is opgestart:
+
+```bash
+kubectl get configmap --namespace vardemo
+
+kubectl get pods --namespace vardemo
+```
+
+Aan de `AGE` kan je zien hoe oud een resource is en dat de pod opnieuw is gestart.
+
+Benader de applicatie en bekijk welke variables deze heeft.
 
 
 ## Deploy vardemo applicatie
@@ -442,7 +557,6 @@ kubectl apply -f deploy/variabele_demo/
 
 
 ###### Grote lijnen ######
-- Deployment met persistent storage
 - Bonus deplyment Evironment, inclusief pod op andere poort laten luisteren.
 - Bonus Configmap
 - Helm deployment podinfo inclusief upgrade (geen downtime) Beschrijven round robin loadbalancing ingress
