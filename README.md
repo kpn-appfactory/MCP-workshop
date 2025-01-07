@@ -144,17 +144,19 @@ Simuleer een applicatie crash:
 curl http://<JOUW-IP>:8080/kill
 ```
 
-Je zal zien dat de applicatie na het boven staande commando crashed en niet meer terug komt, als je wil dat de applicatie draait zal je hem weer zelf moeten starten. (HINT - later zullen we hier de voordelen van Kubernetes deployment zien.)
-
-
-
 #### Bonus
 
-TODO: Namespace uitleg!!!!
+Bekijk de logging van de pod
 
+```bash
+kubectl logs --namespace vardemo vardemo-pod
+```
 
+Zoals je kan zien doen geven we bij het opvragen van de logs en pods steeds het argument mee `--namespace vardemo` mee. In Kubernetes zorgt een **namespace** voor het isoleren van groepen resources binnen een enkele cluster. Dit betekent dat je verschillende omgevingen of teams kunt scheiden, zodat ze niet met elkaars resources in de war raken. Elke resource binnen een namespace moet een unieke naam hebben, maar dezelfde naam kan in verschillende namespaces voorkomen.
 
-###
+Namespaces helpen ook bij het beheren van toegang en het toewijzen van hoeveel resources elk team mag gebruiken. Dit maakt het eenvoudiger om een Kubernetes-cluster georganiseerd en veilig te houden.
+
+### Opdracht 4
 
 
 
@@ -220,3 +222,15 @@ kubectl apply -f deploy/variabele_demo/
 
 #_Nu in de browser naar https://vardemo.local
 ```
+
+
+
+
+
+
+###### Grote lijnen ######
+- Deployment uitleggen met replica's
+- Uitleg deploy, service, ingress (text) simple deploy in bonus extra uitleg
+- Deployment met persistent storage
+- Helm deployment podinfo inclusief upgrade (geen downtime)
+
