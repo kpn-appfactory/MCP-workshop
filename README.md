@@ -187,7 +187,227 @@ kubectl get pods -n vardemo -o wide
 kubectl get deployment -n vardemo -o wide
 ```
 
-Je zal nu zien dat er 2 pods zijn. 
+Je zal nu zien dat er 2 pods zijn.
+
+De applicatie is nu bereikbaar via een ingress (gaan we hier niet verder op in) welke de ontsluiting regelt via zijn eigen ip. Deze is met het volgende commando te vinden:
+
+```bash
+kubectl get ing --namespace vardemo vardemo
+```
+
+Het ip adress wat je hier ziet kan je nu gebruiken om verbinding met de applicatie te maken.
+
+Om de applicatie te bereiken is er ook een DNS entry nodig, hiervoor dient de hostfile aangepast te worden met de volgende entry.
+
+```text
+# Entry voor kubernetes ingress
+<JOUW_IP>  vardemo.local podinfo.local
+```
+
+De applicatie is nu bereikbaar via `http://vardemo.local` vanuit je browser in Windows.
+
+Backup om verbinding te krijgen via curl
+
+```bash
+curl http://172.30.65.10 -H 'Host: vardemo.local'
+```
+
+#### Bonus 1 (Service)
+Om pods te ontsluiten wordt er binnen Kubernetes gebruik gemaakt van services. Services hebben een eigen IP/poort en kijken op basis van labels welke pods ze beschikbaar moeten maken. De pods dienen dus als backend van de service. Bekijk hoe de service voor de vardemo applicatie er uit ziet en hoe die werkt.
+
+```bash
+kubectl get service --namespace vardemo vardemo -o yaml
+```
+
+De output ziet er ongeveer uit zoals hieronder:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"vardemo","namespace":"vardemo"},"spec":{"ports":[{"name":"http","port":80,"protocol":"TCP","targetPort":"http"}],"selector":{"app":"vardemo"},"type":"ClusterIP"}}
+  creationTimestamp: "2025-01-07T11:00:11Z"
+  name: vardemo
+  namespace: vardemo
+  resourceVersion: "25009"
+  uid: b66b5283-4819-4aad-bff9-2ab4db977b41
+spec:
+  clusterIP: 10.43.31.118
+  clusterIPs:
+  - 10.43.31.118
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    app: vardemo
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+```
+
+Onder `selector` staat `app: vardemo` wat overeen komt met de pods die door de service worden ontsloten. Kijk of je het label in de pod kan vinden.
+
+```bash
+# Bekijk welke pods er zijn
+kubectl get pods --namespace vardemo
+
+# Haal het manifest van 1 pod met de naam die hierboven gevonden is
+kubectl get pods --namespace vardemo <JOUW-VARDEMO-POD> -o yaml
+
+# Voorbeeld
+kubectl get pods --namespace vardemo vardemo-5799b85598-9v4lx -o yaml
+```
+
+De output zie er ongeveer uit zoals hieronder:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2025-01-07T11:04:33Z"
+  generateName: vardemo-5799b85598-
+  labels:
+    app: vardemo
+    pod-template-hash: 5799b85598
+  name: vardemo-5799b85598-9v4lx
+  namespace: vardemo
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: vardemo-5799b85598
+    uid: b499048d-864f-4c81-947f-04cb48275ef0
+  resourceVersion: "25216"
+  uid: efd30622-2aa5-4b28-b4ad-450801137cee
+spec:
+  containers:
+  - image: jvgemert/vardemo:1.2
+    imagePullPolicy: IfNotPresent
+    name: vardemo
+    ports:
+    - containerPort: 8080
+      name: http
+      protocol: TCP
+    resources:
+      limits:
+        cpu: 100m
+        memory: 32Mi
+      requests:
+        cpu: 50m
+        memory: 8Mi
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-5t78p
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: desktop-oa8vr5k
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: vardemo
+  serviceAccountName: vardemo
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-5t78p
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+```
+
+#### Bonus 2 (Ingress)
+
+Ingresses zijn een mogelijkheid om services van applicatie te ontsluiten naar de buitenwereld.
+
+
+Ingresses hebben (min of meer) een eigen IP/poort en kijken op basis van labels welke services ze beschikbaar moeten maken. De services dienen dus als backend van de ingess. De complete flow is dus:
+Ingress -> Service -> Pod(s)
+
+Bekijk hoe de ingress voor de vardemo applicatie er uit ziet en hoe die werkt.
+
+```bash
+kubectl get ingress --namespace vardemo vardemo -o yaml
+```
+
+De output hiervan zal vergelijkbaar zijn met wat hieronder staat:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+  name: vardemo
+  namespace: vardemo
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: vardemo.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: vardemo
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - vardemo.local
+```
+
+In het bovenstaande manifest verwijst het `-backend:` gedeelte naar de achterliggende service. De naam van de service dient dus overeen te komen met vardemo applicatie service naam.
+
+### Opdracht 5 (Create deployment met storage)
+
+De storage die standaard in een pod aanwezig is, is niet permanent. Dit betekend dus dat wanneer een pod wordt gestopt eventuele data verloren gaat. Om dit op te lossen kan er gebruik gemaakt worden van persitent storage welke eventueel deelbaar is tussen pods.
+
+```bash
+# Aanmaken persistent storage
+kubectl apply -f pvc.yaml
+
+# Deployment met persistant storage
+kubectl apply -f deployment_storage.yaml
+```
+
 
 ## Deploy vardemo applicatie
 
@@ -222,8 +442,6 @@ kubectl apply -f deploy/variabele_demo/
 
 
 ###### Grote lijnen ######
-- Deployment uitleggen met replica's
-- Uitleg deploy, service, ingress (text) simple deploy in bonus extra uitleg
 - Deployment met persistent storage
 - Bonus deplyment Evironment, inclusief pod op andere poort laten luisteren.
 - Bonus Configmap
