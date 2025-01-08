@@ -18,6 +18,7 @@ sudo usermod -aG docker $(whoami)
 export K3S_KUBECONFIG_MODE="644"
 curl -sfL https://get.k3s.io | sh -
 cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+mkdir -p ~/.kube
 chmod 600 ~/.kube/config
 
 # Install Helm
