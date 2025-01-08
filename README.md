@@ -572,10 +572,137 @@ De vardemo applicatie doet dit niet dus zal die herstart moeten worden voor je a
 
 We hebben nu een applicatie geinstalleerd met daarbij diverse resources die nodig zijn. Om het installeren van applicaties met al hun afhankelijkheden makkelijker te maken wordt er vaak ook gebruik gemaakt van Helm. De applicatie-ontwikkelaar levert dan een helm-chart die gebruikt kan worden om de applicatie inclusief alle bijbehoren de resources te instaleren.
 
+In deze opdracht gaan we een helm chart installeren en upgraden.
 
+Voege de helm repo toe:
 
+```bash
+# Add podinfo helm repo
+helm repo add podinfo https://stefanprodan.github.io/podinfo
+```
 
+Beschikbare versies van de applicatie:
 
+```bash
+# Bekijk de beschikbare versie
+helm search repo podinfo/podinfo
+# Bekijk de beschikbare versies
+helm search repo podinfo/podinfo --versions
+```
+
+Installeer de applicatie met een specifieke versie, je kan de versie ook weglaten dan wordt de laatste versie geinstalleerd. Voor nu installeren we versie 6.7.0 om straks te kunnen upgraden.
+
+```bash
+# Installeer de applicatie met een specifieke versie
+helm install podinfo podinfo/podinfo \
+--create-namespace \
+--namespace=podinfo \
+--version 6.7.0
+```
+
+Een helm chart kun je ook met default waardes installeeren, sla dit voor nu echter over.
+
+```bash
+# Ter info, sla deze stap over
+helm install podinfo podinfo/podinfo
+```
+
+```bash
+# Bekijk de installatie status van de helm charts
+helm list
+# of
+helm list --all-namespaces
+# of
+helm list -n podinfo
+```
+
+Upgrade de applicatie met default waardes, sla deze stap over.
+
+```bash
+# Ter info, sla deze stap over
+helm upgrade -i podinfo podinfo/podinfo
+```
+
+Upgrade de applicatie met parameters
+
+```bash
+# Upgrade de applicatie met parameters
+helm upgrade --install --wait podinfo \
+--namespace podinfo \
+--set replicaCount=2 \
+--set ingress.enabled=true \
+--set ingress.annotations."traefik\.ingress\.kubernetes\.io/router\.entrypoints"="web\, websecure" \
+--version 6.7.0 \
+podinfo/podinfo
+```
+
+Er is nu een applicatie gestart die te bereiken is op https://<JOUW-IP> via een browser of curl.
+
+```bash
+curl https://<JOUW-IP>
+curl -vk http://178.20.173.139 -H "Host: podinfo.local"
+curl http://172.30.65.10 -H 'Host: vardemo.local'
+```
+
+Het is mogelijk om de applicatie te testen met helm test.
+
+```bash
+# Test de applicatie
+helm test podinfo --namespace default
+```
+
+Upgrade de applicatie naar versie 6.7.1, aangezien de applicatie geen downtime heeft zal je alleen verschil zien in de versies.
+
+```bash
+# Upgrade de applicatie naar versie 6.7.1
+helm upgrade --install --wait podinfo \
+--namespace default \
+--set replicaCount=2 \
+--set ingress.enabled=true \
+--set ingress.annotations."traefik\.ingress\.kubernetes\.io/router\.entrypoints"="web\, websecure" \
+--version 6.7.1 \
+podinfo/podinfo
+```
+
+Bekijk de gebruikte values van de applicatie.
+
+```bash
+# Bekijk de gebruikte values
+helm get values podinfo
+```
+
+Exporteer de values naar een file.
+
+```bash
+# Dump de values naar een file
+helm get values podinfo > podinfo_values.yaml
+```
+
+Bekijk alle values, deze zijn ook te vinden in de chart zelf.
+Voorbeeld:
+<https://github.com/stefanprodan/podinfo/tree/master/charts/podinfo>
+
+```bash
+# Bekijk alle values
+helm get values podinfo --all
+```
+
+Verwijder de applicatie, we gaan deze nu opnieuw installeren met de values file.
+
+```bash
+# Verwijder de applicatie
+helm delete podinfo
+```
+
+Installeer de applicatie met de values file.
+
+```bash
+# Installeer de applicatie via de values file
+
+helm install podinfo podinfo/podinfo -f podinfo_values.yaml
+```
+
+Zoals je ziet is het installeer van een helm chart via een values files een stuk eenvoudiger dan alles via `--set` mee te geven. Deze values file kan ook gebruikt worden om de applicatie te upgraden. Ook is deze values file in versiebeheer te zetten zodat je altijd weet welke configuratie er is gebruikt.
 
 
 ###### Grote lijnen ######
