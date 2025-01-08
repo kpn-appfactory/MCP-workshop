@@ -570,7 +570,9 @@ De vardemo applicatie doet dit niet dus zal die herstart moeten worden voor je a
 
 ### Opdracht 8
 
-Deployment via Helm
+We hebben nu een applicatie geinstalleerd met daarbij diverse resources die nodig zijn. Om het installeren van applicaties met al hun afhankelijkheden makkelijker te maken wordt er vaak ook gebruik gemaakt van Helm. De applicatie-ontwikkelaar levert dan een helm-chart die gebruikt kan worden om de applicatie inclusief alle bijbehoren de resources te instaleren.
+
+
 
 
 
