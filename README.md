@@ -18,8 +18,7 @@
     - [Opdracht 6](#opdracht-6)
     - [Opdracht 7](#opdracht-7)
     - [Opdracht 8](#opdracht-8)
-          - [Grote lijnen](#grote-lijnen)
-
+  - [Bronnen](#bronnen)
 
 # MCP-workshop
 
@@ -39,7 +38,7 @@ Om deze workshop te kunnen draaien is er een omgeving nodig met daarop K3S en do
 
 We hebben voor deze workshop een kant en klare WSL image gemaakt die je kan gebruiken om de workshop te volgen.
 
-Deze kan je hier downloaden: https://mcpworkshop.blob.core.windows.net/mcp-workshop/mcp-workshop.tgz
+Deze kan je hier downloaden: <https://mcpworkshop.blob.core.windows.net/mcp-workshop/mcp-workshop.tgz>
 Pak de image uit en importeer deze in WSL met het volgende commando:
 
 ```bash
@@ -104,7 +103,7 @@ docker run -p 8080:8080 -d --name vardemo jvgemert/vardemo:1.2
 watch docker ps
 ```
 
-Er is nu een docker applicatie gestart die te bereiken is op http://localhost:8080 via een browser of curl.
+Er is nu een docker applicatie gestart die te bereiken is op <http://localhost:8080> via een browser of curl.
 
 ```bash
 curl http://localhost:8080
@@ -233,7 +232,7 @@ Om de applicatie te bereiken is er ook een DNS entry nodig, hiervoor dient de ho
 <JOUW_IP>  vardemo.local podinfo.local
 ```
 
-De applicatie is nu bereikbaar via `http://vardemo.local` vanuit je browser in Windows.
+De applicatie is nu bereikbaar via <http://vardemo.local> vanuit je browser in Windows.
 
 Backup om verbinding te krijgen via curl
 
@@ -574,7 +573,7 @@ We hebben nu een applicatie geinstalleerd met daarbij diverse resources die nodi
 
 In deze opdracht gaan we een helm chart installeren en upgraden.
 
-Voege de helm repo toe:
+Voeg de helm repo toe:
 
 ```bash
 # Add podinfo helm repo
@@ -584,13 +583,15 @@ helm repo add podinfo https://stefanprodan.github.io/podinfo
 Beschikbare versies van de applicatie:
 
 ```bash
-# Bekijk de beschikbare versie
+# Bekijk de laatst beschikbare versie
 helm search repo podinfo/podinfo
-# Bekijk de beschikbare versies
+
+# Bekijk alle beschikbare versies
 helm search repo podinfo/podinfo --versions
 ```
 
 Installeer de applicatie met een specifieke versie, je kan de versie ook weglaten dan wordt de laatste versie geinstalleerd. Voor nu installeren we versie 6.7.0 om straks te kunnen upgraden.
+Tijdens de installatie krijg je de melding om een port-forward te doen, negeer deze melding we gaan de applicatie nu nog niet benaderen.
 
 ```bash
 # Installeer de applicatie met een specifieke versie
@@ -600,12 +601,21 @@ helm install podinfo podinfo/podinfo \
 --version 6.7.0
 ```
 
-Een helm chart kun je ook met default waardes installeeren, sla dit voor nu echter over.
+Helm heeft nu de podinfo applicatie geinstalleerd in de namespace `podinfo`, controleer of er een pod draait.
+
+```bash
+kubectl get pods --namespace podinfo
+```
+
+Ter info:
+Een helm chart kun je ook met default waardes installeren, sla dit voor nu echter over.
 
 ```bash
 # Ter info, sla deze stap over
-helm install podinfo podinfo/podinfo
+# helm install podinfo podinfo/podinfo
 ```
+
+Bekijk de installatie status van de geinstalleerde helm charts.
 
 ```bash
 # Bekijk de installatie status van de helm charts
@@ -616,66 +626,44 @@ helm list --all-namespaces
 helm list -n podinfo
 ```
 
+Ter info:
 Upgrade de applicatie met default waardes, sla deze stap over.
 
 ```bash
 # Ter info, sla deze stap over
-helm upgrade -i podinfo podinfo/podinfo
+# helm upgrade -i podinfo podinfo/podinfo
 ```
 
-Upgrade de applicatie met parameters
+Upgrade de applicatie met extra parameters. De parameters zoals hieronder zijn nodig om de applicatie te laten werken in de huidige omgeving. De beschikbare values zijn ook te vinden in de chart zelf.
+
+Voorbeeld:
+<https://github.com/stefanprodan/podinfo/tree/master/charts/podinfo>
+
+Applicaties geinstalleerd met Helm kunnen worden geupgrade / aangepast zonder de applicatie opnieuw te installeren.
 
 ```bash
 # Upgrade de applicatie met parameters
 helm upgrade --install --wait podinfo \
 --namespace podinfo \
 --set replicaCount=2 \
---set ingress.enabled=true \
---set ingress.annotations."traefik\.ingress\.kubernetes\.io/router\.entrypoints"="web\, websecure" \
 --version 6.7.0 \
 podinfo/podinfo
 ```
 
-Er is nu een applicatie gestart die te bereiken is op https://<JOUW-IP> via een browser of curl.
-
-```bash
-curl https://<JOUW-IP>
-curl -vk http://178.20.173.139 -H "Host: podinfo.local"
-curl http://172.30.65.10 -H 'Host: vardemo.local'
-```
-
-Het is mogelijk om de applicatie te testen met helm test.
-
-```bash
-# Test de applicatie
-helm test podinfo --namespace default
-```
-
-Upgrade de applicatie naar versie 6.7.1, aangezien de applicatie geen downtime heeft zal je alleen verschil zien in de versies.
-
-```bash
-# Upgrade de applicatie naar versie 6.7.1
-helm upgrade --install --wait podinfo \
---namespace default \
---set replicaCount=2 \
---set ingress.enabled=true \
---set ingress.annotations."traefik\.ingress\.kubernetes\.io/router\.entrypoints"="web\, websecure" \
---version 6.7.1 \
-podinfo/podinfo
-```
+In bovenstaande actie wordt onder andere de `replicaCount` opgehoogd van 1 naar 2 bekijk welk effect dit heeft op de pods.
 
 Bekijk de gebruikte values van de applicatie.
 
 ```bash
 # Bekijk de gebruikte values
-helm get values podinfo
+helm get values podinfo --namespace podinfo
 ```
 
 Exporteer de values naar een file.
 
 ```bash
 # Dump de values naar een file
-helm get values podinfo > podinfo_values.yaml
+helm get values podinfo --namespace podinfo > podinfo_values.yaml
 ```
 
 Bekijk alle values, deze zijn ook te vinden in de chart zelf.
@@ -684,39 +672,86 @@ Voorbeeld:
 
 ```bash
 # Bekijk alle values
-helm get values podinfo --all
+helm get values podinfo --namespace podinfo --all
 ```
 
-Verwijder de applicatie, we gaan deze nu opnieuw installeren met de values file.
+Verwijder de applicatie, we gaan deze nu opnieuw installeren met een aangepaste values file.
 
 ```bash
 # Verwijder de applicatie
-helm delete podinfo
+helm delete podinfo --namespace podinfo
 ```
 
-Installeer de applicatie met de values file.
+Voor het ontsluiten van de applicatie hebben we een ingress nodig. Om deze te configureren geven we de settings mee via een values file, op commandline zou dit te complex worden.
+
+Pas de `podinfo_values.yaml` aan naar onderstaande voorbeeld:
+
+```yaml
+USER-SUPPLIED VALUES:
+image:
+  tag: 6.7.0
+ingress:
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+  enabled: true
+  hosts:
+    - host: "podinfo.local"
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+replicaCount: 2
+```
+
+Installeer de applicatie nu met deze values file:
 
 ```bash
-# Installeer de applicatie via de values file
-
-helm install podinfo podinfo/podinfo -f podinfo_values.yaml
+helm upgrade --install podinfo --namespace podinfo podinfo/podinfo -f podinfo_values.yaml
 ```
 
-Zoals je ziet is het installeer van een helm chart via een values files een stuk eenvoudiger dan alles via `--set` mee te geven. Deze values file kan ook gebruikt worden om de applicatie te upgraden. Ook is deze values file in versiebeheer te zetten zodat je altijd weet welke configuratie er is gebruikt.
+Bekijk de ingress met het volgende commando:
+
+```bash
+# Bekijk ingresses
+kubectl get ingress --namespace podinfo
+
+# Bekijk het ingress manifest
+kubectl get ingress --namespace podinfo podinfo -o yaml
+```
+
+Door het aanmaken van de ingress is de applicatie nu te bereiken op <http://podinfo.local>  
+Er is nu een applicatie gestart die te bereiken is op https://<JOUW-IP> via een browser of curl.
+
+```bash
+curl https://<JOUW-IP>
+curl http://172.30.65.10 -H 'Host: podinfo.local'
+```
+
+Upgrade de applicatie naar versie 6.7.1, aangezien de applicatie geen downtime heeft zal je alleen verschil zien in de versies. Het is handig om dit tijdens de upgrade te monitoren in je browser.
+
+Pas hiervoor de values file aan naar de juiste versie, en upgrade de applicatie via het `helm upgrade` comando.
+
+Zoals je ziet is het installeren van een helm chart via een values files een stuk eenvoudiger dan alles via `--set` mee te geven. Deze values file kan ook gebruikt worden om de applicatie te upgraden. Ook is deze values file in versiebeheer te zetten zodat je altijd weet welke configuratie er is gebruikt.
+
+Het is ook mogelijk om de values file te combineren met settings op de commandline. Wanneer je snel een aanpassing wil doen of wil testen.
+
+```bash
+helm upgrade --install podinfo \
+--namespace podinfo podinfo/podinfo \
+--set replicaCount=3 \
+-f podinfo_values.yaml
+```
+
+Hiermee ben je aan het einde gekomen van deze workshop, veel plezier met Kubernetes en Happy Helming!
+
+## Bronnen
+
+<https://kubernetes.io>  
+<https://helm.sh>  
+<https://github.com/stefanprodan/podinfo>  
+<https://github.com/stefanprodan/podinfo/tree/master/charts/podinfo>  
 
 
-###### Grote lijnen ######
-- Helm deployment podinfo inclusief upgrade (geen downtime) Beschrijven round robin loadbalancing ingress
-- Installatie met oude versie
-- Installatie met nieuwe versie / upgrade
-- Blue / green
-- Verhaal geen downtijd (als je applicatie daar mee om kan gaan)
-- Helm installatie met parameters
-- Helm installatie met values file
-- Bonus bekijk chart files
-- Overzicht applicatie / helmchart versies
-- Opvragen van values welke nu gebruikt worden
-  - Dumpen naar schrem
-  - Dumpen naar file voor hergebruik
-- Laat alle helm values zien
-- 
+
+
+TODO: apply traefik-config.yml in script en WSL
+
