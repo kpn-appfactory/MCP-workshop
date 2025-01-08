@@ -2,6 +2,10 @@
 
 # This script is tested on Ubuntu 24.04 LTS in an WSL2 environment
 
+# Determine shell used
+SHELL_USED=$(basename ${SHELL})
+SHELL_RC_FILE="~/.${SHELL_USED}rc"
+
 # Update OS & install docker
 sudo apt update
 sudo apt upgrade
@@ -14,14 +18,23 @@ sudo usermod -aG docker $(whoami)
 export K3S_KUBECONFIG_MODE="644"
 curl -sfL https://get.k3s.io | sh -
 
+# Install Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm get_helm.sh
+
 # Configure bash completion and alias for kubectl
-LINE='source <(kubectl completion bash)'
-grep "${LINE}" ~/.bashrc > /dev/null
+LINE='# Added by k3s setup.sh'
+grep "${LINE}" ${SHELL_RC_FILE} > /dev/null
 if [ ${?} -gt 0 ]
 then
-    echo "${LINE}" >> ~/.bashrc
-    echo 'alias k=kubectl' >> ~/.bashrc
-    echo 'complete -o default -F __start_kubectl k' >> ~/.bashrc
+    echo >> ${SHELL_RC_FILE}
+    echo "${LINE}" >> ${SHELL_RC_FILE}
+    echo 'source <(kubectl completion ${SHELL_USED})' >> ${SHELL_RC_FILE}
+    echo 'alias k=kubectl' >> ${SHELL_RC_FILE}
+    echo 'complete -o default -F __start_kubectl k' >> ${SHELL_RC_FILE}
+    echo 'source <(helm completion ${SHELL_USED})' >> ${SHELL_RC_FILE}
 fi
 
 # Install k9s 
@@ -33,9 +46,3 @@ ln -fs /etc/rancher/k3s/k3s.yaml ~/.kube/config
 
 echo
 echo "!!! Please logout and login again to make use of new group membership !!!"
-
-# Install Helm
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
-rm get_helm.sh
