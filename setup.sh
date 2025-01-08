@@ -31,10 +31,10 @@ if [ ${?} -gt 0 ]
 then
     echo >> ~/${SHELL_RC_FILE}
     echo "${LINE}" >> ~/${SHELL_RC_FILE}
-    echo 'source <(kubectl completion ${SHELL_USED})' >> ~/${SHELL_RC_FILE}
+    echo "source <(kubectl completion ${SHELL_USED})" >> ~/${SHELL_RC_FILE}
     echo 'alias k=kubectl' >> ~/${SHELL_RC_FILE}
     echo 'complete -o default -F __start_kubectl k' >> ~/${SHELL_RC_FILE}
-    echo 'source <(helm completion ${SHELL_USED})' >> ~/${SHELL_RC_FILE}
+    echo "source <(helm completion ${SHELL_USED})" >> ~/${SHELL_RC_FILE}
 fi
 
 # Install k9s 
