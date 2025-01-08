@@ -17,8 +17,8 @@ sudo usermod -aG docker $(whoami)
 # Install K3S
 export K3S_KUBECONFIG_MODE="644"
 curl -sfL https://get.k3s.io | sh -
-cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 mkdir -p ~/.kube
+cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 chmod 600 ~/.kube/config
 
 # Install Helm
@@ -45,8 +45,5 @@ fi
 LASTEST_K9S_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r .tag_name)
 wget https://github.com/derailed/k9s/releases/download/${LASTEST_K9S_VERSION}/k9s_linux_amd64.deb -O /tmp/k9s_linux_amd64.deb && sudo apt install /tmp/k9s_linux_amd64.deb && rm /tmp/k9s_linux_amd64.deb
 
-# Link to kube config for k9s
-ln -fs /etc/rancher/k3s/k3s.yaml ~/.kube/config
-
 echo
-echo "!!! Please logout and login again to make use of new group membership !!!"
+echo -e "\033[5m!!! Please logout and login again to make use of new group membership !!!\033[0m"
