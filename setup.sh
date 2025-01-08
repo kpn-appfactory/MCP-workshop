@@ -33,3 +33,9 @@ ln -fs /etc/rancher/k3s/k3s.yaml ~/.kube/config
 
 echo
 echo "!!! Please logout and login again to make use of new group membership !!!"
+
+# Install Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm get_helm.sh
