@@ -17,6 +17,8 @@ sudo usermod -aG docker $(whoami)
 # Install K3S
 export K3S_KUBECONFIG_MODE="644"
 curl -sfL https://get.k3s.io | sh -
+cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+chmod 600 ~/.kube/config
 
 # Install Helm
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -35,6 +37,7 @@ then
     echo 'alias k=kubectl' >> ~/${SHELL_RC_FILE}
     echo 'complete -o default -F __start_kubectl k' >> ~/${SHELL_RC_FILE}
     echo "source <(helm completion ${SHELL_USED})" >> ~/${SHELL_RC_FILE}
+    echo 'export KUBECONFIG=~/.kube/config' >> ~/${SHELL_RC_FILE}
 fi
 
 # Install k9s 
