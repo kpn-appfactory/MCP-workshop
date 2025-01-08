@@ -4,7 +4,7 @@
 
 # Determine shell used
 SHELL_USED=$(basename ${SHELL})
-SHELL_RC_FILE="~/.${SHELL_USED}rc"
+SHELL_RC_FILE=".${SHELL_USED}rc"
 
 # Update OS & install docker
 sudo apt update
@@ -26,15 +26,15 @@ rm get_helm.sh
 
 # Configure bash completion and alias for kubectl
 LINE='# Added by k3s setup.sh'
-grep "${LINE}" ${SHELL_RC_FILE} > /dev/null
+grep "${LINE}" ~/${SHELL_RC_FILE} > /dev/null
 if [ ${?} -gt 0 ]
 then
-    echo >> ${SHELL_RC_FILE}
-    echo "${LINE}" >> ${SHELL_RC_FILE}
-    echo 'source <(kubectl completion ${SHELL_USED})' >> ${SHELL_RC_FILE}
-    echo 'alias k=kubectl' >> ${SHELL_RC_FILE}
-    echo 'complete -o default -F __start_kubectl k' >> ${SHELL_RC_FILE}
-    echo 'source <(helm completion ${SHELL_USED})' >> ${SHELL_RC_FILE}
+    echo >> ~/${SHELL_RC_FILE}
+    echo "${LINE}" >> ~/${SHELL_RC_FILE}
+    echo 'source <(kubectl completion ${SHELL_USED})' >> ~/${SHELL_RC_FILE}
+    echo 'alias k=kubectl' >> ~/${SHELL_RC_FILE}
+    echo 'complete -o default -F __start_kubectl k' >> ~/${SHELL_RC_FILE}
+    echo 'source <(helm completion ${SHELL_USED})' >> ~/${SHELL_RC_FILE}
 fi
 
 # Install k9s 
