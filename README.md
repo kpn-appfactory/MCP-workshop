@@ -201,6 +201,7 @@ Tevens rollen we voor ontsluiting en security extra resources uit waar we hier n
 cd ~/MCP-workshop/deploy/vardemo
 
 # Extra benodigde resources
+kubectl apply -f ~/MCP-workshop/config/traefik-config.yml
 kubectl apply -f service-account.yaml
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
@@ -749,9 +750,3 @@ Hiermee ben je aan het einde gekomen van deze workshop, veel plezier met Kuberne
 <https://helm.sh>  
 <https://github.com/stefanprodan/podinfo>  
 <https://github.com/stefanprodan/podinfo/tree/master/charts/podinfo>  
-
-
-
-
-TODO: apply traefik-config.yml in script en WSL
-
