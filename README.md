@@ -170,7 +170,9 @@ Simuleer een applicatie crash:
 curl http://<JOUW-IP>:8080/kill
 ```
 
-Verwijderen pod dit kan je doen door het zelfde manifest te gebruiken:
+Verwijderen pod dit kan je doen door het zelfde manifest te gebruiken:  
+**Let op!** Als je onderstaande bonus opdracht wil doen moet je de pod nog niet verwijderen. Logging bekijken kan alleen als de pod nog bestaat.
+
 
 ```bash
 cd ~/MCP-workshop/deploy/vardemo
@@ -186,6 +188,8 @@ Bekijk de logging van de pod
 ```bash
 kubectl logs --namespace vardemo vardemo-pod
 ```
+
+Verwijder de pod en bekijk de logs nogmaals, je zal zien dat de logs niet meer beschikbaar zijn.
 
 Zoals je kan zien doen geven we bij het opvragen van de logs en pods steeds het argument mee `--namespace vardemo` mee. In Kubernetes zorgt een **namespace** voor het isoleren van groepen resources binnen een enkele cluster. Dit betekent dat je verschillende omgevingen of teams kunt scheiden, zodat ze niet met elkaars resources in de war raken. Elke resource binnen een namespace moet een unieke naam hebben, maar dezelfde naam kan in verschillende namespaces voorkomen.
 
@@ -226,7 +230,7 @@ kubectl get ing --namespace vardemo vardemo
 
 Het ip adress wat je hier ziet kan je nu gebruiken om verbinding met de applicatie te maken.
 
-Om de applicatie te bereiken is er ook een DNS entry nodig, hiervoor dient de hostfile aangepast te worden met de volgende entry.
+Om de applicatie te bereiken is er ook een DNS entry nodig, hiervoor dient de hostfile van je laptop aangepast te worden met de volgende entry.
 
 ```text
 # Entry voor kubernetes ingress
@@ -238,7 +242,7 @@ De applicatie is nu bereikbaar via <http://vardemo.local> vanuit je browser in W
 Backup om verbinding te krijgen via curl
 
 ```bash
-curl http://172.30.65.10 -H 'Host: vardemo.local'
+curl http://<JOUW_IP> -H 'Host: vardemo.local'
 ```
 
 #### Bonus 1 (Service)
@@ -467,7 +471,7 @@ Bekijk de pvc (persistentvolumeclaim). Een pvc creeert een pv (persitentvolume).
 
 ```bash
 # Bekijk de pvc
-kubectl get pvc --namespace vardemo vardemo -o yaml
+kubectl get pvc --namespace vardemo vardemo-pvc -o yaml
 
 # Bekijk de pv
 kubectl get pv
@@ -573,6 +577,12 @@ De vardemo applicatie doet dit niet dus zal die herstart moeten worden voor je a
 We hebben nu een applicatie geinstalleerd met daarbij diverse resources die nodig zijn. Om het installeren van applicaties met al hun afhankelijkheden makkelijker te maken wordt er vaak ook gebruik gemaakt van Helm. De applicatie-ontwikkelaar levert dan een helm-chart die gebruikt kan worden om de applicatie inclusief alle bijbehoren de resources te instaleren.
 
 In deze opdracht gaan we een helm chart installeren en upgraden.
+
+TODO: Ondanks een copy van k3s.yaml naar ~/.kube/config werkt het niet. Als workaround even een symbolic link maken. Dit oplossen in de image.
+
+```bash
+ln -fs /etc/rancher/k3s/k3s.yaml ~/.kube/config
+```
 
 Voeg de helm repo toe:
 
@@ -706,7 +716,7 @@ replicaCount: 2
 Installeer de applicatie nu met deze values file:
 
 ```bash
-helm upgrade --install podinfo --namespace podinfo podinfo/podinfo -f podinfo_values.yaml
+helm upgrade --install podinfo --namespace podinfo podinfo/podinfo -f podinfo_values.yaml ; watch -n 1 kubectl get pods --namespace podinfo
 ```
 
 Bekijk de ingress met het volgende commando:
@@ -723,8 +733,8 @@ Door het aanmaken van de ingress is de applicatie nu te bereiken op <http://podi
 Er is nu een applicatie gestart die te bereiken is op https://<JOUW-IP> via een browser of curl.
 
 ```bash
-curl https://<JOUW-IP>
-curl http://172.30.65.10 -H 'Host: podinfo.local'
+curl https://<JOUW-IP> -H 'Host: podinfo.local'
+curl http://<JOUW-IP> -H 'Host: podinfo.local'
 ```
 
 Upgrade de applicatie naar versie 6.7.1, aangezien de applicatie geen downtime heeft zal je alleen verschil zien in de versies. Het is handig om dit tijdens de upgrade te monitoren in je browser.
@@ -750,3 +760,4 @@ Hiermee ben je aan het einde gekomen van deze workshop, veel plezier met Kuberne
 <https://helm.sh>  
 <https://github.com/stefanprodan/podinfo>  
 <https://github.com/stefanprodan/podinfo/tree/master/charts/podinfo>  
+<https://k3s.io/>  
