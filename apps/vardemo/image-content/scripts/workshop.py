@@ -4,10 +4,13 @@ import time
 import os
 import datetime
 
+server_status = 'Starting'
+
 def main():
     # Define the port on which the server will listen
     port = int(os.getenv('PORT', 8080))
     requests_file = os.getenv('REQUESTS_FILE', '/data/requests.txt')
+    startup_delay = int(os.getenv('STARTUP_DELAY', 5))
     envs = []
     cm_vars = []
     for name, value in os.environ.items():
@@ -33,6 +36,19 @@ def main():
     # Listen for incoming connections
     server_socket.listen(5)
 
+    # Time delay to simulate a slow start
+    log(f"Starting application with a delay of {startup_delay} seconds")
+    
+    # Start background timer to change server_status to running in main loop after the delay
+    def set_server_status() -> None:
+        time.sleep(startup_delay)
+        global server_status
+        server_status = 'Running'
+        log("Server status changed to Running")
+   
+    import threading
+    threading.Thread(target=set_server_status).start()
+
     log(f"Container is listening on port { port}")
 
     while True:
@@ -43,51 +59,41 @@ def main():
         log("Got a connection from %s" % str(addr))
 
         # Data received from client
-        data = client_socket.recv(1024)
-        data_lines = data.decode('ascii').split('\n')
-        get_request = None
-        source_ip = None
-        for line in data_lines:
-            if line.startswith('GET '):
-                get_request = line.split(' ')[1].split('?')[0]
-                get_request_path = get_request.split('/')
-                get_request_path = [x for x in get_request_path if x]
-            if line.startswith('X-Forwarded-For: ') and not source_ip:
-                source_ip = line.split(' ')[1]
-            if line.startswith('X-Real-IP: '):
-                source_ip = line.split(' ')[1]
+        data = process_incomming_data(client_socket.recv(1024))
 
-        if not source_ip:
-            source_ip = str(addr[0])
+        
+            # if line.startswith('X-Forwarded-For: ') and not source_ip:
+            #     source_ip = line.split(' ')[1]
+            # if line.startswith('X-Real-IP: '):
+            #     source_ip = line.split(' ')[1]
+
+        source_ip = str(addr[0])
         source_port = str(addr[1])
-
+        if 'X-Forwarded-For' in data['headers']:
+            source_ip = data['headers']['X-Forwarded-For'].split(',')[0]
+        if 'X-Real-IP' in data['headers']:
+            source_ip = data['headers']['X-Real-IP']
+        
         log(f"Received data from client:\n{data.decode('ascii')}\n")
 
-        body =  f"Time in container: {str(time.ctime())}\n"
-        body += f"Container start time: {container_start_time}\n"
-        body += f"Requests received: {requests(requests_file)}\n"
-        body += f"Hostname: {host}\n"
-        body += f"Container port: {port}\n"
-        body += f"Client source ip: {source_ip}\n"
-        body += f"Client source port: {source_port}\n"
-        body += f"GET request: {get_request}\n"
-        body += "\n"
-        if len(get_request_path) == 1 and get_request_path[0].lower() == "env":
-            body += "Environment variables:\n"
-            for env in envs:
-                body += f"{env['name']}: {env['value']}\n"
-        else:
-            if cm_vars:
-                for cm_var in cm_vars:
-                    body += f"{cm_var['name']}: {cm_var['value']}\n"
+        response, kill, unhealthy = generate_response(data, server_status, container_start_time, requests_file, host, port, source_ip, source_port, envs, cm_vars)
+
+        if unhealthy:
+            response['unhealthy_duration']
+            response['body'] += f"\n!!! THIS CONTAINER IS UNHEALTHY for {response['unhealthy_duration']} seconds !!!\n"
+            if server_status == 'Running':
+                server_status = 'Unhealthy'
+                log(f"Server status changed to Unhealthy for {response['unhealthy_duration']} seconds")
+                thre
+
             else:
-                body += "No CM_VAR_ vars found\n"
-        if len(get_request_path) == 1 and get_request_path[0].lower() == "kill":
-            body += "\n!!! THIS CONTAINER WILL BE KILLED !!!\n"
-            kill = True
+                log(f"Server status remains Unhealthy for {response['unhealthy_duration']} seconds")
+
+        if kill:
+            response['body'] += "\n!!! THIS CONTAINER WILL BE KILLED !!!\n"
         response_headers = {
             'Content-Type': 'text/text; encoding=utf8',
-            'Content-Length': len(body),
+            'Content-Length': len(response['body']),
             'Connection': 'close',
         }
 
@@ -101,7 +107,7 @@ def main():
         client_socket.sendall(response.encode())
         client_socket.sendall(response_headers_raw.encode())
         client_socket.sendall(b'\r\n') # to separate headers from body
-        client_socket.send(body.encode(encoding="utf-8"))
+        client_socket.send(response['body'].encode(encoding="utf-8"))
 
         # Close the connection
         client_socket.close()
@@ -109,6 +115,69 @@ def main():
             break
     log("Stopping application")
     server_socket.close()
+
+
+def generate_response(data: dict, server_status: str, container_start_time: str, requests_file: str, host: str, port: int, source_ip: str, source_port: str, envs: dict, cm_vars: dict) -> tuple(str, bool, bool):
+    kill = False
+    unhealthy = False
+    response = {
+        'body': f"Server status: {server_status}\n",
+        'unhealthy_duration': 0
+    }
+    
+    if server_status != 'Running':
+
+
+    if data['path'] == '/':
+        response['body'] += "Welcome to the VarDemo app\n
+        
+
+
+    if server_status == 'Unhealthy':
+        response['unhealthy_duration'] = int(time.time() - time.mktime(time.strptime(container_start_time)))
+    response['body'] += f"Host: {host}\n"
+    response['body'] += f"Port: {port}\n"
+    response['body'] += f"Source IP: {source_ip}\n"
+    response['body'] += f"Source Port: {source_port}\n"
+    response['body'] += f"Method: {data['method']}\n"
+    response['body'] += f"Path: {data['path']}\n"
+    response['body'] += f"Headers:\n"
+    for key, value in data['headers'].items():
+        response['body'] += f"  {key}: {value}\n"
+    response['body'] += f"Body: {data['body']}\n"
+    response['body'] += f"Requests: {requests(requests_file)}\n"
+    response['body'] += f"Environment variables:\n"
+    for env in envs:
+        response['body'] += f"  {env['name']}: {env['value']}\n"
+    response['body'] += f"ConfigMap variables:\n"
+    for cm_var in cm_vars:
+        response['body'] += f"  {cm_var['name']}: {cm_var['value']}\n"
+
+    if 'KILL' in data['path']:
+        kill = True
+    if 'UNHEALTHY' in data['path']:
+        unhealthy = True
+    return response, kill, unhealthy
+
+
+def process_incomming_data(incomming) -> dict:
+    data_lines = incomming.decode('ascii').split('\n')
+    data = {
+        'method': data_lines[0].split(' ')[0],
+        'path': data_lines[0].split(' ')[1],
+        'headers': {},
+        'body': ''
+    }
+    for line in data_lines:
+        if line == '':
+            break
+        if ':' in line:
+            key, value = line.split(':', 1)
+            data['headers'][key] = value
+
+    if data['method'] == 'POST':
+        data['body'] = data_lines[-1]
+    return data
 
 
 def requests(requests_file:str) -> int:
