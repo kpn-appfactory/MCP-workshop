@@ -26,7 +26,7 @@ MCP container and kubernetes workshop
 
 ## Introduction
 
-Het doel van deze workshop is om applicaties te laten draaien in een Kubernetes "cluster". Tijdens deze workshop zullen we gebruik maken van K3S wat een eenvoudige maar volledig functioneel Kubernetes cluster is.
+Het doel van deze workshop is om je de basis van Kubernetes bij te brengen. We zullen je laten zien hoe je applicaties kunt containeriseren met Docker en vervolgens kunt beheren en schalen in een Kubernetes cluster. Aan de hand van praktische oefeningen met K3s, een eenvoudig te installeren Kubernetes distributie, zul je ervaren hoe Kubernetes de orchestratie van containers automatiseert. Je zult leren over concepten als pods, services, deployments en namespaces. Daarnaast zullen we de verschillen tussen Docker en Kubernetes uitleggen: terwijl Docker zich richt op het creëren en beheren van individuele containers, is Kubernetes een platform voor het beheren van clusters van containers. Kubernetes zorgt voor zaken als load balancing, automatische schaalbaarheid en failover.
 
 ## Voorbereiding
 
