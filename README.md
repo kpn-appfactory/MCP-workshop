@@ -230,7 +230,7 @@ kubectl get ing --namespace vardemo vardemo
 
 Het IP-adres dat je hier ziet, kun je nu gebruiken om verbinding met de applicatie te maken.
 
-Om de applicatie te bereiken, moet je ook een DNS-entry toevoegen. Hiervoor moet je de hostfile van je laptop aanpassen met de volgende entry.
+Om de applicatie te bereiken is er ook een DNS entry nodig, en dus moet je ook een DNS-entry toevoegen. Hiervoor moet je de hostfile van je laptop aanpassen met de volgende entry.
 
 ```text
 # Entry voor kubernetes ingress
@@ -431,7 +431,7 @@ In het bovenstaande manifest verwijst het gedeelte `- backend:` naar de achterli
 
 ### Opdracht 5 (Create deployment met storage)
 
-De opslag die standaard in een pod aanwezig is, is niet permanent. Dit betekent dat wanneer een pod wordt gestopt, eventuele data verloren gaat. Om dit op te lossen kan er gebruik worden gemaakt van *persistent storage*, die eventueel gedeeld kan worden tussen pods.
+De *storage* die standaard in een pod aanwezig is, is niet *persistant*. Dit betekent dat wanneer een pod wordt gestopt, eventuele data verloren gaat. Om dit op te lossen kan er gebruik worden gemaakt van *persistent storage*, die eventueel gedeeld kan worden tussen pods.
 
 Met een browser of curl kan de applicatie worden opgevraagd. In de output van de applicatie staat een regel met `Requests received`, die weergeeft hoe vaak de applicatie is benaderd. Zonder de *persistent storage* zou de telling na iedere herstart opnieuw beginnen.
 
