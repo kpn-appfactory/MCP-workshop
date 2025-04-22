@@ -115,7 +115,7 @@ Simuleer een applicatie crash:
 curl http://localhost:8080/kill
 ```
 
-Je zal zien dat de applicatie na het boven staande commando crashed en niet meer terug komt, als je wil dat de applicatie draait zal je hem weer zelf moeten starten. (HINT - later zullen we hier de voordelen van Kubernetes deployment zien.)
+Je zult zien dat de applicatie na het bovenstaande commando crasht en niet meer terugkomt. Als je wilt dat de applicatie weer draait, moet je deze handmatig opnieuw starten. (TIP: later zullen we de voordelen van een Kubernetes-deployment zien.)
 
 #### Bonus
 
@@ -133,7 +133,7 @@ docker rm vardemo
 
 ### Opdracht 3 (Deploy applicatie in Kubernetes)
 
-We gaan nu dezelfde applicatie starten in Kubernetes. Dit gaan we doen door middel van een Pod om dit vergelijkbaar te maken met de Docker implementatie. Later gaan we gebruik maken van een Deployment om de voordelen van Kubernetes te laten zien.
+We gaan nu dezelfde applicatie starten in Kubernetes. Dit doen we door middel van een Pod, zodat het vergelijkbaar is met de Docker-implementatie. Later maken we gebruik van een Deployment om de voordelen van Kubernetes te demonstreren.
 
 ```bash
 cd ~/MCP-workshop/deploy/vardemo
@@ -169,9 +169,8 @@ Simuleer een applicatie crash:
 ```bash
 curl http://<JOUW-IP>:8080/kill
 ```
-
-Verwijderen pod dit kan je doen door het zelfde manifest te gebruiken:  
-**Let op!** Als je onderstaande bonus opdracht wil doen moet je de pod nog niet verwijderen. Logging bekijken kan alleen als de pod nog bestaat.
+Verwijder de pod. Dit kun je doen door hetzelfde manifest te gebruiken:  
+**Let op!** Als je onderstaande bonusopdracht wilt doen, moet je de pod nog niet verwijderen. Logging bekijken kan alleen als de pod nog bestaat.
 
 
 ```bash
@@ -189,17 +188,17 @@ Bekijk de logging van de pod
 kubectl logs --namespace vardemo vardemo-pod
 ```
 
-Verwijder de pod en bekijk de logs nogmaals, je zal zien dat de logs niet meer beschikbaar zijn.
+Verwijder de pod en bekijk de logs nogmaals. Je zult zien dat de logs niet meer beschikbaar zijn.
 
-Zoals je kan zien doen geven we bij het opvragen van de logs en pods steeds het argument mee `--namespace vardemo` mee. In Kubernetes zorgt een **namespace** voor het isoleren van groepen resources binnen een enkele cluster. Dit betekent dat je verschillende omgevingen of teams kunt scheiden, zodat ze niet met elkaars resources in de war raken. Elke resource binnen een namespace moet een unieke naam hebben, maar dezelfde naam kan in verschillende namespaces voorkomen.
+Zoals je kunt zien, geven we bij het opvragen van de logs en pods steeds het argument `--namespace vardemo` mee. In Kubernetes zorgt een **namespace** voor het isoleren van groepen resources binnen een enkel cluster. Dit betekent dat je verschillende omgevingen of teams kunt scheiden, zodat ze niet met elkaars resources in de war raken. Elke resource binnen een namespace moet een unieke naam hebben, maar dezelfde naam kan in verschillende namespaces voorkomen.
 
 Namespaces helpen ook bij het beheren van toegang en het toewijzen van hoeveel resources elk team mag gebruiken. Dit maakt het eenvoudiger om een Kubernetes-cluster georganiseerd en veilig te houden.
 
 ### Opdracht 4 (Create deployment)
 
-In deze opdracht gaan we een deploment uitrollen. Een deployment wordt meestal gebruikt voor het configureren van de pods. Hierin is het onder andere mogelijk om aan te geven hoeveel replicas er van een pod moeten komen voor redudantie en het gebruik van eventuele storage (latere opdracht).
+In deze opdracht gaan we een deployment uitrollen. Een deployment wordt meestal gebruikt voor het configureren van de pods. Hierin kun je onder andere aangeven hoeveel replicas er van een pod moeten worden gemaakt voor redundantie en het gebruik van eventuele storage (latere opdracht).
 
-Tevens rollen we voor ontsluiting en security extra resources uit waar we hier niet verder op in gaan.
+Daarnaast rollen we extra resources uit voor ontsluiting en beveiliging, waar we hier verder niet op ingaan.
 
 ```bash
 cd ~/MCP-workshop/deploy/vardemo
@@ -228,9 +227,9 @@ De applicatie is nu bereikbaar via een ingress (gaan we hier niet verder op in) 
 kubectl get ing --namespace vardemo vardemo
 ```
 
-Het ip adress wat je hier ziet kan je nu gebruiken om verbinding met de applicatie te maken.
+Het IP-adres dat je hier ziet, kun je nu gebruiken om verbinding met de applicatie te maken.
 
-Om de applicatie te bereiken is er ook een DNS entry nodig, hiervoor dient de hostfile van je laptop aangepast te worden met de volgende entry.
+Om de applicatie te bereiken, moet je ook een DNS-entry toevoegen. Hiervoor moet je het hostbestand van je laptop aanpassen met de volgende entry.
 
 ```text
 # Entry voor kubernetes ingress
@@ -246,7 +245,7 @@ curl http://<JOUW_IP> -H 'Host: vardemo.local'
 ```
 
 #### Bonus 1 (Service)
-Om pods te ontsluiten wordt er binnen Kubernetes gebruik gemaakt van services. Services hebben een eigen IP/poort en kijken op basis van labels welke pods ze beschikbaar moeten maken. De pods dienen dus als backend van de service. Bekijk hoe de service voor de vardemo applicatie er uit ziet en hoe die werkt.
+Om pods te ontsluiten wordt binnen Kubernetes gebruikgemaakt van services. Services hebben een eigen IP/poort en bepalen op basis van labels welke pods ze beschikbaar moeten maken. De pods fungeren dus als backend van de service. Bekijk hoe de service voor de vardemo-applicatie eruitziet en hoe deze werkt.
 
 ```bash
 kubectl get service --namespace vardemo vardemo -o yaml
@@ -287,7 +286,7 @@ status:
   loadBalancer: {}
 ```
 
-Onder `selector` staat `app: vardemo` wat overeen komt met de pods die door de service worden ontsloten. Kijk of je het label in de pod kan vinden.
+Onder `selector` staat `app: vardemo`, wat overeenkomt met de pods die door de service worden ontsloten. Controleer of je het label in de pod kunt vinden.
 
 ```bash
 # Bekijk welke pods er zijn
@@ -387,13 +386,13 @@ spec:
 
 #### Bonus 2 (Ingress)
 
-Ingresses zijn een mogelijkheid om services van applicatie te ontsluiten naar de buitenwereld.
+Ingresses zijn een mogelijkheid om services van applicaties te ontsluiten naar de buitenwereld.
 
 
-Ingresses hebben (min of meer) een eigen IP/poort en kijken op basis van labels welke services ze beschikbaar moeten maken. De services dienen dus als backend van de ingess. De complete flow is dus:
+Ingresses hebben (min of meer) een eigen IP/poort en bepalen op basis van labels welke services ze beschikbaar moeten maken. De services fungeren dus als backend van de ingress. De complete flow is dus:
 Ingress -> Service -> Pod(s)
 
-Bekijk hoe de ingress voor de vardemo applicatie er uit ziet en hoe die werkt.
+Bekijk hoe de ingress voor de vardemo applicatie eruit ziet en hoe deze werkt.
 
 ```bash
 kubectl get ingress --namespace vardemo vardemo -o yaml
@@ -427,15 +426,15 @@ spec:
     - vardemo.local
 ```
 
-In het bovenstaande manifest verwijst het `-backend:` gedeelte naar de achterliggende service. De naam van de service dient dus overeen te komen met vardemo applicatie service naam.
+In het bovenstaande manifest verwijst het gedeelte `- backend:` naar de achterliggende service. De naam van de service moet overeenkomen met de servicenaam van de vardemo-applicatie.
 
 ### Opdracht 5 (Create deployment met storage)
 
-De storage die standaard in een pod aanwezig is, is niet permanent. Dit betekend dus dat wanneer een pod wordt gestopt eventuele data verloren gaat. Om dit op te lossen kan er gebruik gemaakt worden van persitent storage welke eventueel deelbaar is tussen pods.
+De opslag die standaard in een pod aanwezig is, is niet permanent. Dit betekent dat wanneer een pod wordt gestopt, eventuele data verloren gaat. Om dit op te lossen kan er gebruik worden gemaakt van *persistent storage*, die eventueel gedeeld kan worden tussen pods.
 
-Met een browser of curl kan de applicatie opgevraagd worden. In de output van de applicatie staat een regel met `Requests received`, deze geeft weer hoe vaak de applicatie is benaderd. Zonder de persistent storage zou de telling na iedere herstart weer opnieuw beginnen.
+Met een browser of curl kan de applicatie worden opgevraagd. In de output van de applicatie staat een regel met `Requests received`, die weergeeft hoe vaak de applicatie is benaderd. Zonder de *persistent storage* zou de telling na iedere herstart opnieuw beginnen.
 
-Benader de applicatie zoals beschreven bij vorige opdracht en noteer het aantal `Requests received`
+Benader de applicatie zoals beschreven in de vorige opdracht en noteer het aantal `Requests received`.
 
 ```bash
 # Verwijder de pods
@@ -449,15 +448,15 @@ Het laatste commando met `--watch` kan worden afgebroken met CTRL+C
 
 Benader de applicatie weer en zie dat de telling opnieuw is begonnen.
 
-Met de volgende commandos wordt de applicatie aangepast zodat deze gebruik maakt van persistent storage
+Met de volgende commandos wordt de applicatie aangepast zodat deze gebruik maakt van *persistent storage*
 
 ```bash
 cd ~/MCP-workshop/deploy/vardemo
 
-# Aanmaken persistent storage
+# Aanmaken *persistent storage*
 kubectl apply -f pvc.yaml
 
-# Deployment met persistent storage
+# Deployment met *persistent storage*
 kubectl apply -f deployment_storage.yaml
 ```
 
@@ -467,7 +466,7 @@ Herstart de applicatie nogmaals zoals hierboven beschreven en zie dat de telling
 
 #### Bonus
 
-Bekijk de pvc (persistentvolumeclaim). Een pvc creeert een pv (persitentvolume).
+Bekijk de pvc (persistentvolumeclaim). Een pvc creëert een pv (persistentvolume).
 
 ```bash
 # Bekijk de pvc
@@ -485,11 +484,11 @@ n.b. Een pv is niet namespaced
 
 ### Opdracht 6
 
-Deployment zijn gebaseerd op een (generiek) image. Kleine aanpassingen kunnen gewijzigd worden door het meegeven van environment variables. De environment variables moeten dan in de deployment mee gegeven worden.
+Deployments zijn gebaseerd op een (generiek) image. Kleine aanpassingen kunnen worden doorgevoerd door het meegeven van environment-variabelen. Deze environment-variabelen moeten in de deployment worden opgenomen.
 
-Simpele variablen kunnen mee gegeven worden in de deployment. Voor meer complexe of uitgebreide variablen kan hiervoor ook een configmap gebruikt worden (volgende oefening).
+Eenvoudige variabelen kunnen direct in de deployment worden meegegeven. Voor meer complexe of uitgebreide variabelen kan een configmap worden gebruikt (volgende oefening).
 
-De vardemo applicatie luistert bijvoorbeeld standaard op poort 8080, ter demonstratie kan deze op andere poorten luisteren door het meegeven van een environment variable `PORT`.
+De vardemo-applicatie luistert bijvoorbeeld standaard op poort 8080. Ter demonstratie kan deze op andere poorten luisteren door het meegeven van een environment-variabele `PORT`.
 
 ```yaml
 env:
@@ -550,7 +549,7 @@ kubectl apply -f configmap.yaml
 kubectl apply -f deployment_env_cm.yaml
 ```
 
-Controleer of de configmap er is en de pod opnieuw is opgestart:
+Controleer of de configmap aanwezig is en of de pod opnieuw is opgestart:
 
 ```bash
 kubectl get configmap --namespace vardemo
@@ -558,27 +557,27 @@ kubectl get configmap --namespace vardemo
 kubectl get pods --namespace vardemo
 ```
 
-Aan de `AGE` kan je zien hoe oud een resource is en dat de pod opnieuw is gestart.
+Aan de `AGE` kun je zien hoe oud een resource is en dat de pod opnieuw is gestart.
 
-Benader de applicatie en bekijk welke variables deze heeft. Standaard worden onder aan de output van de applicatie alle variablen weergegeven die beginnen met `CM_VAR_`. Vergelijk de variabelen in de configmap en de output van de applicatie.
+Benader de applicatie en bekijk welke variabelen deze heeft. Standaard worden onderaan de output van de applicatie alle variabelen weergegeven die beginnen met `CM_VAR_`. Vergelijk de variabelen in de configmap met de output van de applicatie.
 
-Als je alle environment variablen wil zien kan die door `/env` toe te voegen aan het path.
+Als je alle environment-variabelen wilt zien, kun je `/env` toevoegen aan het pad.
 
 ```bash
 curl http://172.30.65.10/env -H 'Host: vardemo.local'
 ```
 
-Probeer nu zelf variablen toe te voegen via de configmap. In principe wordt een configmap regelmatig ingelezen, het is echter afhankelijk van de applicatie of dit wordt opgepakt.
+Probeer nu zelf variabelen toe te voegen via de configmap. In principe wordt een configmap regelmatig ingelezen, maar het is afhankelijk van de applicatie of deze wijzigingen automatisch oppakt.
 
-De vardemo applicatie doet dit niet dus zal die herstart moeten worden voor je aanpassing zichtbaar is.
+De vardemo-applicatie doet dit niet, dus moet deze herstart worden voordat je aanpassingen zichtbaar zijn.
 
 ### Opdracht 8
 
-We hebben nu een applicatie geinstalleerd met daarbij diverse resources die nodig zijn. Om het installeren van applicaties met al hun afhankelijkheden makkelijker te maken wordt er vaak ook gebruik gemaakt van Helm. De applicatie-ontwikkelaar levert dan een helm-chart die gebruikt kan worden om de applicatie inclusief alle bijbehoren de resources te instaleren.
+We hebben nu een applicatie geïnstalleerd met daarbij diverse resources die nodig zijn. Om het installeren van applicaties met al hun afhankelijkheden makkelijker te maken, wordt er vaak gebruikgemaakt van Helm. De applicatieontwikkelaar levert dan een Helm-chart die gebruikt kan worden om de applicatie inclusief alle bijbehorende resources te installeren.
 
-In deze opdracht gaan we een helm chart installeren en upgraden.
+In deze opdracht gaan we een Helm-chart installeren en upgraden.
 
-TODO: Ondanks een copy van k3s.yaml naar ~/.kube/config werkt het niet. Als workaround even een symbolic link maken. Dit oplossen in de image.
+**TODO:** Ondanks een kopie van `k3s.yaml` naar `~/.kube/config` werkt het niet. Als workaround kun je een symbolic link maken. Dit probleem moet worden opgelost in de image.
 
 ```bash
 ln -fs /etc/rancher/k3s/k3s.yaml ~/.kube/config
@@ -601,8 +600,8 @@ helm search repo podinfo/podinfo
 helm search repo podinfo/podinfo --versions
 ```
 
-Installeer de applicatie met een specifieke versie, je kan de versie ook weglaten dan wordt de laatste versie geinstalleerd. Voor nu installeren we versie 6.7.0 om straks te kunnen upgraden.
-Tijdens de installatie krijg je de melding om een port-forward te doen, negeer deze melding we gaan de applicatie nu nog niet benaderen.
+Installeer de applicatie met een specifieke versie. Je kunt de versie ook weglaten; in dat geval wordt de laatste versie geïnstalleerd. Voor nu installeren we versie 6.7.0, zodat we deze later kunnen upgraden.  
+Tijdens de installatie krijg je mogelijk een melding om een port-forward uit te voeren. Negeer deze melding, want we gaan de applicatie op dit moment nog niet benaderen.
 
 ```bash
 # Installeer de applicatie met een specifieke versie
@@ -612,7 +611,7 @@ helm install podinfo podinfo/podinfo \
 --version 6.7.0
 ```
 
-Helm heeft nu de podinfo applicatie geinstalleerd in de namespace `podinfo`, controleer of er een pod draait.
+Helm heeft nu de podinfo-applicatie geïnstalleerd in de namespace `podinfo`. Controleer of er een pod draait.
 
 ```bash
 kubectl get pods --namespace podinfo
@@ -626,7 +625,7 @@ Een helm chart kun je ook met default waardes installeren, sla dit voor nu echte
 # helm install podinfo podinfo/podinfo
 ```
 
-Bekijk de installatie status van de geinstalleerde helm charts.
+Bekijk de installatiestatus van de geïnstalleerde Helm-charts.
 
 ```bash
 # Bekijk de installatie status van de helm charts
@@ -650,7 +649,7 @@ Upgrade de applicatie met extra parameters. De parameters zoals hieronder zijn n
 Voorbeeld:
 <https://github.com/stefanprodan/podinfo/tree/master/charts/podinfo>
 
-Applicaties geinstalleerd met Helm kunnen worden geupgrade / aangepast zonder de applicatie opnieuw te installeren.
+Applicaties geïnstalleerd met Helm kunnen worden geüpgraded of aangepast zonder dat de applicatie opnieuw hoeft te worden geïnstalleerd.
 
 ```bash
 # Upgrade de applicatie met parameters
@@ -693,7 +692,7 @@ Verwijder de applicatie, we gaan deze nu opnieuw installeren met een aangepaste 
 helm delete podinfo --namespace podinfo
 ```
 
-Voor het ontsluiten van de applicatie hebben we een ingress nodig. Om deze te configureren geven we de settings mee via een values file, op commandline zou dit te complex worden.
+Voor het ontsluiten van de applicatie hebben we een ingress nodig. Om deze te configureren geven we de settings mee via een values file. Op commandline zou dit te complex worden.
 
 Pas de `podinfo_values.yaml` aan naar onderstaande voorbeeld:
 
@@ -736,14 +735,13 @@ Er is nu een applicatie gestart die te bereiken is op https://<JOUW-IP> via een 
 curl https://<JOUW-IP> -H 'Host: podinfo.local'
 curl http://<JOUW-IP> -H 'Host: podinfo.local'
 ```
+Upgrade de applicatie naar versie 6.7.1. Aangezien de applicatie geen downtime heeft, zul je alleen verschil zien in de versies. Het is handig om dit tijdens de upgrade te monitoren in je browser.
 
-Upgrade de applicatie naar versie 6.7.1, aangezien de applicatie geen downtime heeft zal je alleen verschil zien in de versies. Het is handig om dit tijdens de upgrade te monitoren in je browser.
+Pas hiervoor de values-file aan naar de juiste versie en upgrade de applicatie via het `helm upgrade`-commando.
 
-Pas hiervoor de values file aan naar de juiste versie, en upgrade de applicatie via het `helm upgrade` comando.
+Zoals je ziet, is het installeren van een Helm-chart via een values-file een stuk eenvoudiger dan alles via `--set` mee te geven. Deze values-file kan ook gebruikt worden om de applicatie te upgraden, of in versiebeheer op te nemen. Dit heeft als voordeel dat je altijd weet welke configuratie is gebruikt.
 
-Zoals je ziet is het installeren van een helm chart via een values files een stuk eenvoudiger dan alles via `--set` mee te geven. Deze values file kan ook gebruikt worden om de applicatie te upgraden. Ook is deze values file in versiebeheer te zetten zodat je altijd weet welke configuratie er is gebruikt.
-
-Het is ook mogelijk om de values file te combineren met settings op de commandline. Wanneer je snel een aanpassing wil doen of wil testen.
+Het is ook mogelijk om de values-file te combineren met settings op de commandline. Dit is handig wanneer je snel een aanpassing wilt doen of iets wilt testen.
 
 ```bash
 helm upgrade --install podinfo \
