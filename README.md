@@ -169,6 +169,7 @@ Simuleer een applicatie crash:
 ```bash
 curl http://<JOUW-IP>:8080/kill
 ```
+
 Verwijder de pod. Dit kun je doen door hetzelfde manifest te gebruiken:  
 **Let op!** Als je onderstaande bonusopdracht wilt doen, moet je de pod nog niet verwijderen. Logging bekijken kan alleen als de pod nog bestaat.
 
@@ -229,7 +230,7 @@ kubectl get ing --namespace vardemo vardemo
 
 Het IP-adres dat je hier ziet, kun je nu gebruiken om verbinding met de applicatie te maken.
 
-Om de applicatie te bereiken, moet je ook een DNS-entry toevoegen. Hiervoor moet je het hostbestand van je laptop aanpassen met de volgende entry.
+Om de applicatie te bereiken, moet je ook een DNS-entry toevoegen. Hiervoor moet je de hostfile van je laptop aanpassen met de volgende entry.
 
 ```text
 # Entry voor kubernetes ingress
