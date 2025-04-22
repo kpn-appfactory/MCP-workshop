@@ -736,6 +736,7 @@ Er is nu een applicatie gestart die te bereiken is op https://<JOUW-IP> via een 
 curl https://<JOUW-IP> -H 'Host: podinfo.local'
 curl http://<JOUW-IP> -H 'Host: podinfo.local'
 ```
+
 Upgrade de applicatie naar versie 6.7.1. Aangezien de applicatie geen downtime heeft, zul je alleen verschil zien in de versies. Het is handig om dit tijdens de upgrade te monitoren in je browser.
 
 Pas hiervoor de values-file aan naar de juiste versie en upgrade de applicatie via het `helm upgrade`-commando.
