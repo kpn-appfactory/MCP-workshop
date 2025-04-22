@@ -431,9 +431,9 @@ In het bovenstaande manifest verwijst het gedeelte `- backend:` naar de achterli
 
 ### Opdracht 5 (Create deployment met storage)
 
-De *storage* die standaard in een pod aanwezig is, is niet *persistant*. Dit betekent dat wanneer een pod wordt gestopt, eventuele data verloren gaat. Om dit op te lossen kan er gebruik worden gemaakt van *persistent storage*, die eventueel gedeeld kan worden tussen pods.
+De storage die standaard in een pod aanwezig is, is niet persistant. Dit betekent dat wanneer een pod wordt gestopt, eventuele data verloren gaat. Om dit op te lossen kan er gebruik worden gemaakt van persistent storage, die eventueel gedeeld kan worden tussen pods.
 
-Met een browser of curl kan de applicatie worden opgevraagd. In de output van de applicatie staat een regel met `Requests received`, die weergeeft hoe vaak de applicatie is benaderd. Zonder de *persistent storage* zou de telling na iedere herstart opnieuw beginnen.
+Met een browser of curl kan de applicatie worden opgevraagd. In de output van de applicatie staat een regel met `Requests received`, die weergeeft hoe vaak de applicatie is benaderd. Zonder de persistent storage zou de telling na iedere herstart opnieuw beginnen.
 
 Benader de applicatie zoals beschreven in de vorige opdracht en noteer het aantal `Requests received`.
 
@@ -449,15 +449,15 @@ Het laatste commando met `--watch` kan worden afgebroken met CTRL+C
 
 Benader de applicatie weer en zie dat de telling opnieuw is begonnen.
 
-Met de volgende commandos wordt de applicatie aangepast zodat deze gebruik maakt van *persistent storage*
+Met de volgende commandos wordt de applicatie aangepast zodat deze gebruik maakt van persistent storage
 
 ```bash
 cd ~/MCP-workshop/deploy/vardemo
 
-# Aanmaken *persistent storage*
+# Aanmaken persistent storage
 kubectl apply -f pvc.yaml
 
-# Deployment met *persistent storage*
+# Deployment met persistent storage
 kubectl apply -f deployment_storage.yaml
 ```
 
@@ -578,7 +578,7 @@ We hebben nu een applicatie geïnstalleerd met daarbij diverse resources die nod
 
 In deze opdracht gaan we een Helm-chart installeren en upgraden.
 
-**TODO:** Ondanks een kopie van `k3s.yaml` naar `~/.kube/config` werkt het niet. Als workaround kun je een symbolic link maken. Dit probleem moet worden opgelost in de image.
+TODO: Ondanks een kopie van `k3s.yaml` naar `~/.kube/config` werkt het niet. Als workaround kun je een symbolic link maken. Dit probleem moet worden opgelost in de image.
 
 ```bash
 ln -fs /etc/rancher/k3s/k3s.yaml ~/.kube/config
