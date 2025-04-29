@@ -24,6 +24,8 @@
 
 MCP container and kubernetes workshop
 
+[Presentatie](https://kpnbv.sharepoint.com/:p:/s/CloudWorplace-CloudInnovation/EQV_1FK9U_1Jix3WBDG3JdMBawWKy0W6S0tI3238Ahy6SA?e=P7vtnF)
+
 ## Introduction
 
 In deze workshop gaan we je leren hoe je applicaties kunt draaien in een Kubernetes cluster. We gebruiken hiervoor K3s, een lichtgewicht Kubernetes distributie. Daarnaast zullen we dieper ingaan op de relatie tussen Docker en Kubernetes, zodat je begrijpt hoe deze twee technologieën samenwerken om applicaties op schaal te beheren.
